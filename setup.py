@@ -7,6 +7,7 @@ setuptools.setup(
     install_requires=[
         "numpy",
         "scipy",
+        "pdf2image",
     ],
     packages=setuptools.find_packages(),
 )
