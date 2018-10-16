@@ -21,7 +21,7 @@ def migrate_pdfs(img_ext=".png", dpi=300):
         for pdf_file in filenames:
             name, ext = os.path.splitext(pdf_file)
             if ext == ".pdf":
-                img_file = name + "." + img_ext
+                img_file = name + img_ext
                 if img_file in filenames:
                     print("Skipping {}...".format(img_file))
                 else:
