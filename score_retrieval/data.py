@@ -16,6 +16,7 @@ def save_first_page(pdf_path, img_path, dpi=300):
 
 def migrate_pdfs(img_ext="png", dpi=300):
     """Migrate all pdfs to images."""
+    print("Migrating {}...".format(DATA_DIR))
     for dirpath, _, filenames in os.walk(DATA_DIR):
         for pdf_file in filenames:
             name, ext = os.path.splitext(pdf_file)
