@@ -11,7 +11,7 @@ from score_retrieval.constants import (
 def save_first_page(pdf_path, img_path, dpi=300):
     """Save first page of given pdf as an image."""
     pages = convert_from_path(pdf_path, dpi)
-    pages[-1].save(img_path, os.path.splitext(img_path)[-1])
+    pages[-1].save(img_path, os.path.splitext(img_path)[-1].lstrip("."))
 
 
 def migrate_pdfs(img_ext=".png", dpi=300):
