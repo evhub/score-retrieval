@@ -71,7 +71,7 @@ def index_data():
         database_paths += head
         database_labels += [label]*len(head)
         query_paths.append(tail)
-        query_paths.append(label)
+        query_labels.append(label)
     return database_paths, database_labels, query_paths, query_labels
 
 
