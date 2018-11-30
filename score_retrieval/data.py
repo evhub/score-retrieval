@@ -84,5 +84,14 @@ def load_data():
         yield label, imread(img_path)
 
 
+def get_basename_to_path_dict():
+    """Generate a dictionary mapping basenames of images to their paths."""
+    basename_to_path = {}
+    for _, path in index_images():
+        basename = os.path.basename(path)
+        basename_to_path[basename] = path
+    return basename_to_path
+
+
 if __name__ == "__main__":
     migrate_pdfs()

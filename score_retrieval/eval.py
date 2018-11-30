@@ -3,7 +3,17 @@ import numpy as np
 from score_retrieval.data import (
     query_labels,
     database_labels,
+    database_paths,
 )
+
+
+def path_ranking_to_index_ranking(path_ranking):
+    """Convert ranking of paths into ranking of indices."""
+    query_ranking = []
+    for database_path in path_ranking:
+        database_index = database_paths.index(database_path)
+        query_ranking.append(database_index)
+    return query_ranking
 
 
 def get_pos_ranks(query_rankings):
