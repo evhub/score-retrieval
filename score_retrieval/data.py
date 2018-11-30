@@ -51,15 +51,6 @@ def index_by_label():
     return index
 
 
-def indices_with_label(target_label, labels):
-    """Get indices in labels with target_label."""
-    indices = []
-    for i, label in enumerate(labels):
-        if label == target_label:
-            indices.append(i)
-    return indices
-
-
 def index_data():
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     database_paths = []
@@ -73,6 +64,18 @@ def index_data():
         query_paths.append(tail)
         query_labels.append(label)
     return database_paths, database_labels, query_paths, query_labels
+
+
+database_paths, database_labels, query_paths, query_labels = index_data()
+
+
+def indices_with_label(target_label, labels):
+    """Get indices in labels with target_label."""
+    indices = []
+    for i, label in enumerate(labels):
+        if label == target_label:
+            indices.append(i)
+    return indices
 
 
 def load_data():
