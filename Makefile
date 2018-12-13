@@ -9,8 +9,8 @@ clean:
 
 .PHONY: migrate
 migrate:
-	python ./score_retrieval/data.py
+	python ./score_retrieval/migration.py
 
-.PHONY: copy
-copy:
+.PHONY: copy-data
+copy-data:
 	python ./score_retrieval/copying.py

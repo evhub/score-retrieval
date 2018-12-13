@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+import traceback
 
 from score_retrieval.constants import (
     SCRAPE_DIR,
@@ -28,7 +29,6 @@ def copy_data(num_pieces):
         try:
             shutil.copytree(dirpath, newpath)
         except shutil.Error:
-            import traceback
             traceback.print_exc()
             print("Skipping: {} -> {}".format(dirpath, newpath))
 
