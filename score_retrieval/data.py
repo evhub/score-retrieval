@@ -1,4 +1,5 @@
 import os
+import random
 from collections import defaultdict
 
 from pdf2image import convert_from_path
@@ -8,6 +9,8 @@ from score_retrieval.constants import (
     DATA_DIR,
     IMG_EXT,
     DPI,
+    SKIP_QUERYLESS,
+    SAMPLE,
 )
 
 
@@ -51,15 +54,17 @@ def index_by_label():
     return index
 
 
-def index_data(skip_queryless=True):
+def index_data(index=None):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
+    if index is None:
+        index = index_by_label()
     database_paths = []
     database_labels = []
     query_paths = []
     query_labels = []
-    for label, img_paths in index_by_label().items():
+    for label, img_paths in index.items():
         if len(img_paths) < 2:
-            if skip_queryless:
+            if SKIP_QUERYLESS:
                 continue
             head, tail = img_paths, []
         else:
@@ -71,7 +76,18 @@ def index_data(skip_queryless=True):
     return database_paths, database_labels, query_paths, query_labels
 
 
-database_paths, database_labels, query_paths, query_labels = index_data()
+def sample_data(num_samples, seed=0):
+    """Same as index_data, but only samples num_samples from the full dataset."""
+    random.seed(seed)  # we want the sampling to be deterministic
+    index = index_by_label()
+    sampled_index = dict(random.sample(index.items(), num_samples))
+    return index_data(sampled_index)
+
+
+if SAMPLE:
+    database_paths, database_labels, query_paths, query_labels = sample_data(SAMPLE)
+else:
+    database_paths, database_labels, query_paths, query_labels = index_data()
 
 
 def indices_with_label(target_label, labels):
