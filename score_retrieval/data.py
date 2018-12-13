@@ -1,41 +1,14 @@
 import os
-import random
-import shutil
 from collections import defaultdict
 
 from pdf2image import convert_from_path
 from scipy.ndimage import imread
 
 from score_retrieval.constants import (
-    SCRAPE_DIR,
     DATA_DIR,
     IMG_EXT,
     DPI,
 )
-
-
-def index_all_pieces():
-    """Index all the piece directories in the scrape directory."""
-    for dirpath, _, filenames in os.walk(SCRAPE_DIR):
-        for fname in filenames:
-            if os.path.splitext(fname)[-1] == ".pdf":
-                yield dirpath
-                break
-
-
-def copy_data(num_pieces):
-    """Copy num_pieces worth of data to the data directory."""
-    all_pieces = list(index_all_pieces())
-    for dirpath in random.sample(all_pieces, num_pieces):
-        relpath = os.path.relpath(dirpath, SCRAPE_DIR)
-        newpath = os.path.join(DATA_DIR, relpath)
-        print("Saving: {} -> {}".format(dirpath, newpath))
-        try:
-            shutil.copytree(dirpath, newpath)
-        except shutil.Error:
-            import traceback
-            traceback.print_exc()
-            print("Skipping: {} -> {}".format(dirpath, newpath))
 
 
 def save_first_page(pdf_path, img_path):
