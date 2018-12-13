@@ -51,14 +51,19 @@ def index_by_label():
     return index
 
 
-def index_data():
+def index_data(skip_queryless=True):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     database_paths = []
     database_labels = []
     query_paths = []
     query_labels = []
     for label, img_paths in index_by_label().items():
-        head, tail = img_paths[:-1], img_paths[-1]
+        if len(img_paths) < 2:
+            if skip_queryless:
+                continue
+            head, tail = img_paths, []
+        else:
+            head, tail = img_paths[:-1], img_paths[-1]
         database_paths += head
         database_labels += [label]*len(head)
         query_paths.append(tail)
