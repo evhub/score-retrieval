@@ -52,9 +52,14 @@ def index_data(index=None):
 
 def sample_data(num_samples, seed=0):
     """Same as index_data, but only samples num_samples from the full dataset."""
-    random.seed(seed)  # we want the sampling to be deterministic
     index = index_by_label()
-    sampled_index = dict(random.sample(index.items(), num_samples))
+    # we want the sampling to be deterministic and inclusive of previous samples
+    random.seed(seed)
+    sampled_index = []
+    while len(sampled_index) < num_samples:
+        choice = random.choice(index.items())
+        if choice not in sampled_index:
+            sampled_index.append(choice)
     return index_data(sampled_index)
 
 
