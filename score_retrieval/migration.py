@@ -10,8 +10,8 @@ from score_retrieval.constants import (
 )
 
 
-def save_first_page(pdf_path, img_path):
-    """Save first page of given pdf as an image."""
+def save_last_page(pdf_path, img_path):
+    """Save last page of given pdf as an image."""
     try:
         pages = convert_from_path(pdf_path, DPI)
     except Exception:
@@ -35,7 +35,7 @@ def migrate_pdfs():
                     print("Saving {}...".format(img_file))
                     pdf_path = os.path.join(dirpath, pdf_file)
                     img_path = os.path.join(dirpath, img_file)
-                    save_first_page(pdf_path, img_path)
+                    save_last_page(pdf_path, img_path)
                     print("Saved {}.".format(img_file))
 
 
