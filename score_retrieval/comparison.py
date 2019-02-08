@@ -11,4 +11,3 @@ def resample(arr):
 
 def L2(arr1, arr2):
     return norm(arr1 - arr2, ord=2)
-

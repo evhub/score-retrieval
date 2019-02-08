@@ -10,15 +10,16 @@ from score_retrieval.constants import (
 )
 
 
-def save_last_page(pdf_path, img_path):
-    """Save last page of given pdf as an image."""
+def save_page(pdf_path, img_path):
+    """Save middle page of given pdf as an image."""
     try:
         pages = convert_from_path(pdf_path, DPI)
     except Exception:
         traceback.print_exc()
         print("Failed to save {} -> {}.".format(pdf_path, img_path))
     else:
-        pages[-1].save(img_path, os.path.splitext(img_path)[-1].lstrip("."))
+        page_ind = len(pages)//2
+        pages[page_ind].save(img_path, os.path.splitext(img_path)[-1].lstrip("."))
 
 
 def migrate_pdfs():
@@ -35,7 +36,7 @@ def migrate_pdfs():
                     print("Saving {}...".format(img_file))
                     pdf_path = os.path.join(dirpath, pdf_file)
                     img_path = os.path.join(dirpath, img_file)
-                    save_last_page(pdf_path, img_path)
+                    save_page(pdf_path, img_path)
                     print("Saved {}.".format(img_file))
 
 

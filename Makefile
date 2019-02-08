@@ -14,3 +14,7 @@ migrate:
 .PHONY: copy-data
 copy-data:
 	python ./score_retrieval/copying.py
+
+.PHONY: delete-images
+delete-images:
+	find . -name '*.png' -delete
