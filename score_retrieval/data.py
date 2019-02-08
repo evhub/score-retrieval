@@ -12,26 +12,29 @@ from score_retrieval.constants import (
 )
 
 
-def index_images():
+def index_images(dataset=None):
     """Return an iterator of (label, path) for all images."""
-    for dirpath, _, filenames in os.walk(DATA_DIR):
+    data_dir = DATA_DIR
+    if dataset is not None:
+        data_dir = os.path.join(data_dir, dataset)
+    for dirpath, _, filenames in os.walk(data_dir):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:
                 yield dirpath, os.path.join(dirpath, fname)
 
 
-def index_by_label():
+def index_by_label(dataset=None):
     """Return dictionary mapping labels to image paths."""
     index = defaultdict(list)
-    for label, img_path in index_images():
+    for label, img_path in index_images(dataset):
         index[label].append(img_path)
     return index
 
 
-def index_data(index=None):
+def index_data(index=None, dataset=None):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if index is None:
-        index = index_by_label()
+        index = index_by_label(dataset)
     database_paths = []
     database_labels = []
     query_paths = []
@@ -50,9 +53,9 @@ def index_data(index=None):
     return database_paths, database_labels, query_paths, query_labels
 
 
-def sample_data(num_samples, seed=0):
+def sample_data(num_samples, dataset=None, seed=0):
     """Same as index_data, but only samples num_samples from the full dataset."""
-    index = index_by_label()
+    index = index_by_label(dataset)
     # we want the sampling to be deterministic and inclusive of previous samples
     random.seed(seed)
     sampled_index = []
@@ -78,16 +81,16 @@ def indices_with_label(target_label, labels):
     return indices
 
 
-def load_data():
+def load_data(dataset=None):
     """Return an iterator of (label, image) for all images."""
-    for label, img_path in index_images():
+    for label, img_path in index_images(dataset):
         yield label, imread(img_path)
 
 
-def get_basename_to_path_dict():
+def get_basename_to_path_dict(dataset=None):
     """Generate a dictionary mapping basenames of images to their paths."""
     basename_to_path = {}
-    for _, path in index_images():
+    for _, path in index_images(dataset):
         basename = os.path.basename(path)
         basename_to_path[basename] = path
     return basename_to_path
