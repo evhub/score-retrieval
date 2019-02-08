@@ -9,8 +9,7 @@ IMG_EXT = ".png"
 
 DPI = 300
 
-# whether to include database entries with no query
-SKIP_QUERYLESS = True
-
 # size of the subset of the data to sample
 SAMPLE = False
+
+VECTOR_LEN = 100

@@ -1,11 +1,14 @@
 import numpy as np
+from numpy.linalg import norm
 from scipy import signal as ss
 
-def l2(array1, array2):
-    if array1.size > array2.size:
-        array1 = ss.resample(array1, array2.size)
-    elif array1.size < array2.size:
-        array2 = ss.resample(array2, array1.size)
-    diff = array1-array2
-    return np.linalg.norm(diff, ord =2)
+from score_retrieval.constants import VECTOR_LEN
+
+
+def resample(arr):
+    return ss.resample(arr, VECTOR_LEN)
+
+
+def L2(arr1, arr2):
+    return norm(arr1 - arr2, ord=2)
 

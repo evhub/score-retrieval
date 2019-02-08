@@ -7,7 +7,6 @@ from scipy.ndimage import imread
 from score_retrieval.constants import (
     DATA_DIR,
     IMG_EXT,
-    SKIP_QUERYLESS,
     SAMPLE,
 )
 
@@ -31,7 +30,7 @@ def index_by_label(dataset=None):
     return index
 
 
-def index_data(index=None, dataset=None):
+def index_data(index=None, dataset=None, skip_queryless=True):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if index is None:
         index = index_by_label(dataset)
@@ -41,7 +40,7 @@ def index_data(index=None, dataset=None):
     query_labels = []
     for label, img_paths in index.items():
         if len(img_paths) < 2:
-            if SKIP_QUERYLESS:
+            if skip_queryless:
                 continue
             head, tail = img_paths, []
         else:
