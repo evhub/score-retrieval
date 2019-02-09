@@ -1,6 +1,6 @@
 .PHONY: install
 install:
-	pip install -e .
+	pip install -Ue .
 
 .PHONY: clean
 clean:

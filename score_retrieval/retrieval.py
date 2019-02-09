@@ -12,9 +12,11 @@ def resample(arr, resample_len=VECTOR_LEN):
     return ss.resample(arr, resample_len)
 
 
-def L2(arr1, arr2):
+def L2(vec1, vec2):
     """L2 norm between two vectors."""
-    return norm(arr1 - arr2, ord=2)
+    assert vec1.shape == (VECTOR_LEN,), "{}.shape != ({},)".format(vec1.shape, VECTOR_LEN)
+    assert vec2.shape == (VECTOR_LEN,), "{}.shape != ({},)".format(vec2.shape, VECTOR_LEN)
+    return norm(vec1 - vec2, ord=2)
 
 
 def retrieve_vec(query_vec, database_labels, database_vecs):
