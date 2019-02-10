@@ -29,7 +29,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
         assert image is not None, "imread({}) is None".format(path)
         raw_veclist = image_to_veclist_func(image)
         veclist = np.asarray([resample(vec) for vec in raw_veclist if vec.shape])
-        if veclist.shape:
+        if veclist.shape and sum(*veclist.shape) > 0:
             assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
             veclist_path = os.path.splitext(path)[0] + ".npy"
             np.save(veclist_path, veclist)
