@@ -19,6 +19,10 @@ copy-data:
 run-retrieval:
 	python ./score_retrieval/retrieval.py
 
+.PHONY: save-vecs
+save-vecs:
+	python ./score_retrieval/vec_db.py
+
 .PHONY: delete-images
 delete-images:
 	find . -name '*.png' -delete

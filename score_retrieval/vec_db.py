@@ -47,3 +47,8 @@ def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
             flattened_db_labels.append(label)
             flattened_db_vecs.append(vec)
     return flattened_db_labels, flattened_db_vecs
+
+
+if __name__ == "__main__":
+    from score_splitter import create_waveforms
+    save_veclists(create_waveforms)
