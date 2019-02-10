@@ -7,6 +7,16 @@ from numpy.linalg import norm
 from scipy import signal as ss
 
 from score_retrieval.constants import VECTOR_LEN
+from score_retrieval.data import (
+    query_paths,
+    query_labels,
+    database_labels,
+    database_paths,
+)
+from score_retrieval.vec_db import (
+    load_veclists,
+    load_db_vecs,
+)
 
 
 def resample(arr, resample_len=VECTOR_LEN):
@@ -47,18 +57,16 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs):
     return best_label
 
 
-if __name__ == "__main__":
-    from score_retrieval.data import (
-        query_labels,
-    )
-    from score_retrieval.vec_db import (
-        get_query_veclists,
-        load_db_labels_vecs,
-    )
+def run_retrieval(
+    query_labels=query_labels,
+    query_paths=query_paths,
+    database_labels=database_labels,
+    database_paths=database_paths,
+):
+    """Run image retrieval on the given database, query."""
+    query_veclists = load_veclists(query_paths)
 
-    query_veclists = get_query_veclists()
-
-    db_labels, db_vecs = load_db_labels_vecs()
+    db_labels, db_vecs = load_db_vecs(database_labels, database_paths)
 
     correct = 0
     total = 0
@@ -70,3 +78,8 @@ if __name__ == "__main__":
 
     acc = correct/total
     print("Got accuracy of {} for {} data points.".format(acc, total))
+    return acc
+
+
+if __name__ == "__main__":
+    run_retrieval()

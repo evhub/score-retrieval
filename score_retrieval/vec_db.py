@@ -9,7 +9,6 @@ from score_retrieval.data import (
     index_images,
     database_labels,
     database_paths,
-    query_paths,
 )
 from score_retrieval.constants import VECTOR_LEN
 
@@ -33,10 +32,7 @@ def load_veclists(image_paths):
         yield veclist
 
 
-get_query_veclists = partial(load_veclists, query_paths)
-
-
-def load_db_labels_vecs(db_labels=database_labels, db_paths=database_paths):
+def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
     """Return flattened_db_labels, flattened_db_vecs."""
     flattened_db_labels = []
     flattened_db_vecs = []
