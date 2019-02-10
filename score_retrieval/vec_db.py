@@ -16,7 +16,8 @@ from score_retrieval.constants import VECTOR_LEN
 
 def resample(arr, resample_len=VECTOR_LEN):
     """Resample array to constant length."""
-    return ss.resample(np.asarray(arr), resample_len)
+    out_arr = ss.resample(np.asarray(arr), resample_len)
+    assert out_arr.shape == (resample_len,), "{}.shape == {} != ({},)".format(out_arr, out_arr.shape, resample_len)
 
 
 def save_veclists(image_to_veclist_func, dataset=None):
@@ -32,7 +33,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
             veclist_path = os.path.splitext(path)[0] + ".npy"
             np.save(veclist, veclist_path)
         else:
-            print("Got null veclist for {} with shape {} (raw shape {}).".format(path, veclist.shape, raw_veclist.shape))
+            print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
 
 
 def load_veclists(image_labels, image_paths):
