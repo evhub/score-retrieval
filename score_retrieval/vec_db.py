@@ -18,6 +18,7 @@ def resample(arr, resample_len=VECTOR_LEN):
     """Resample array to constant length."""
     out_arr = ss.resample(np.asarray(arr), resample_len)
     assert out_arr.shape == (resample_len,), "{}.shape == {} != ({},)".format(out_arr, out_arr.shape, resample_len)
+    return out_arr
 
 
 def save_veclists(image_to_veclist_func, dataset=None):
