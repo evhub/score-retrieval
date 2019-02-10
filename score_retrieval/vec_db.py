@@ -32,7 +32,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
         if veclist.shape:
             assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
             veclist_path = os.path.splitext(path)[0] + ".npy"
-            np.save(veclist, veclist_path)
+            np.save(veclist_path, veclist)
         else:
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
 
