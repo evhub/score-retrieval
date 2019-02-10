@@ -4,7 +4,6 @@ from collections import defaultdict
 
 import numpy as np
 from numpy.linalg import norm
-from scipy import signal as ss
 
 from score_retrieval.constants import VECTOR_LEN
 from score_retrieval.data import (
@@ -17,11 +16,6 @@ from score_retrieval.vec_db import (
     load_veclists,
     load_db_vecs,
 )
-
-
-def resample(arr, resample_len=VECTOR_LEN):
-    """Resample array to constant length."""
-    return ss.resample(arr, resample_len)
 
 
 def L2(vec1, vec2):

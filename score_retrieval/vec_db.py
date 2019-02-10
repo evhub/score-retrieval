@@ -4,6 +4,7 @@ from functools import partial
 
 import numpy as np
 from scipy.ndimage import imread
+from scipy import signal as ss
 
 from score_retrieval.data import (
     index_images,
@@ -13,11 +14,16 @@ from score_retrieval.data import (
 from score_retrieval.constants import VECTOR_LEN
 
 
+def resample(arr, resample_len=VECTOR_LEN):
+    """Resample array to constant length."""
+    return ss.resample(np.asarray(arr), resample_len)
+
+
 def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for path, label in index_images(dataset):
         image = imread(path)
-        veclist = np.asarray(image_to_veclist_func(image))
+        veclist = np.asarray(map(resample, image_to_veclist_func(image)))
         assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
         veclist_path = os.path.splitext(path)[0] + ".npy"
         np.save(veclist, veclist_path)
