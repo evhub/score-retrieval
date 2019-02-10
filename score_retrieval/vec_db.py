@@ -2,8 +2,8 @@ import os
 import pickle
 from functools import partial
 
+import cv2
 import numpy as np
-from cv2 import imread
 from scipy import signal as ss
 
 from score_retrieval.data import (
@@ -22,7 +22,7 @@ def resample(arr, resample_len=VECTOR_LEN):
 def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
-        image = imread(path)
+        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         veclist = np.asarray(map(resample, image_to_veclist_func(image)))
         assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
         veclist_path = os.path.splitext(path)[0] + ".npy"
