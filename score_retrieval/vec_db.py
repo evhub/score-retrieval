@@ -26,7 +26,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
         image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         assert image is not None, "imread({}) is None".format(path)
         veclist = np.asarray(map(resample, image_to_veclist_func(image)))
-        if len(veclist):
+        if veclist.shape:
             assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
             veclist_path = os.path.splitext(path)[0] + ".npy"
             np.save(veclist, veclist_path)
