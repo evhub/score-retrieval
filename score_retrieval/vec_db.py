@@ -3,7 +3,7 @@ import pickle
 from functools import partial
 
 import numpy as np
-from scipy.ndimage import imread
+from cv2 import imread
 from scipy import signal as ss
 
 from score_retrieval.data import (

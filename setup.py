@@ -8,6 +8,7 @@ setuptools.setup(
         "numpy",
         "scipy",
         "pdf2image",
+        "opencv-python",
     ],
     packages=setuptools.find_packages(),
 )
