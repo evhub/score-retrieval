@@ -31,7 +31,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
             veclist_path = os.path.splitext(path)[0] + ".npy"
             np.save(veclist, veclist_path)
         else:
-            print("Got null veclist for {}!".format(path))
+            print("Got null veclist for {} with shape {}.".format(path, veclist.shape))
 
 
 def load_veclists(image_labels, image_paths):
