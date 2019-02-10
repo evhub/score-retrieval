@@ -21,7 +21,7 @@ def resample(arr, resample_len=VECTOR_LEN):
 
 def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
-    for path, label in index_images(dataset):
+    for label, path in index_images(dataset):
         image = imread(path)
         veclist = np.asarray(map(resample, image_to_veclist_func(image)))
         assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
