@@ -58,13 +58,13 @@ def run_retrieval(
     database_paths=database_paths,
 ):
     """Run image retrieval on the given database, query."""
-    query_veclists = load_veclists(query_paths)
+    q_labels, q_veclists = load_veclists(query_labels, query_paths)
 
     db_labels, db_vecs = load_db_vecs(database_labels, database_paths)
 
     correct = 0
     total = 0
-    for correct_label, veclist in zip(query_labels, query_veclists):
+    for correct_label, veclist in zip(q_labels, q_veclists):
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs)
         if guessed_label == correct_label:
             correct += 1

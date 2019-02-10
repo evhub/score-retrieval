@@ -22,28 +22,36 @@ def resample(arr, resample_len=VECTOR_LEN):
 def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
+        print("Generating veclist for image {}...".format(path))
         image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         assert image is not None, "imread({}) is None".format(path)
         veclist = np.asarray(map(resample, image_to_veclist_func(image)))
-        assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
-        veclist_path = os.path.splitext(path)[0] + ".npy"
-        np.save(veclist, veclist_path)
+        if len(veclist):
+            assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
+            veclist_path = os.path.splitext(path)[0] + ".npy"
+            np.save(veclist, veclist_path)
+        else:
+            print("Got null veclist for {}!".format(path))
 
 
-def load_veclists(image_paths):
-    """Yield vectors for the given image paths."""
-    for path in image_paths:
+def load_veclists(image_labels, image_paths):
+    """Yield (label, veclist) for the given image paths."""
+    for label, path in zip(image_labels, image_paths):
         veclist_path = os.path.splitext(path)[0] + ".npy"
-        veclist = np.load(veclist_path)
-        assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
-        yield veclist
+        if os.path.exists(veclist_path):
+            print("Loading {}...".format(veclist_path))
+            veclist = np.load(veclist_path)
+            assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
+            yield label, veclist
+        else:
+            print("Skipping {}...".format(veclist_path))
 
 
 def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
     """Return flattened_db_labels, flattened_db_vecs."""
     flattened_db_labels = []
     flattened_db_vecs = []
-    for label, veclist in zip(db_labels, load_veclists(db_paths)):
+    for label, veclist in load_veclists(db_paths):
         for vec in veclist:
             flattened_db_labels.append(label)
             flattened_db_vecs.append(vec)
