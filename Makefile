@@ -15,6 +15,10 @@ pdfs-to-images:
 copy-data:
 	python ./score_retrieval/copying.py
 
+.PHONY: run-retrieval
+run-retrieval:
+	python ./score_retrieval/retrieval.py
+
 .PHONY: delete-images
 delete-images:
 	find . -name '*.png' -delete
