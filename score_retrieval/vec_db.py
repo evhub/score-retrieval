@@ -23,6 +23,11 @@ def resample(arr, resample_len=VECTOR_LEN):
     return out_arr
 
 
+def isnull(vec):
+    """Determine whether the given vector is null."""
+    return not vec.shape or sum(vec.shape) == 0
+
+
 def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
@@ -34,9 +39,9 @@ def save_veclists(image_to_veclist_func, dataset=None):
             continue
 
         raw_veclist = image_to_veclist_func(image)
-        veclist = np.asarray([resample(vec) for vec in raw_veclist if vec.shape])
+        veclist = np.asarray([resample(vec) for vec in raw_veclist if not isnull(vec)])
 
-        if not veclist.shape or sum(veclist.shape) == 0:
+        if isnull(veclist):
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
             continue
 
