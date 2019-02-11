@@ -12,6 +12,6 @@ DPI = 300
 # size of the subset of the data to sample
 SAMPLE = False
 
-VECTOR_LEN = 50
+VECTOR_LEN = 500
 
 DEFAULT_DATASET = "mini_dataset"
