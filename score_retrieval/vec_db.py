@@ -10,6 +10,8 @@ from score_retrieval.data import (
     index_images,
     database_labels,
     database_paths,
+    query_labels,
+    query_paths,
 )
 from score_retrieval.constants import VECTOR_LEN
 
@@ -56,11 +58,21 @@ def load_veclists(image_labels, image_paths):
             print("Skipping {}...".format(veclist_path))
 
 
+def load_query_veclists(query_labels=query_labels, query_paths=query_paths):
+    """Return query_labels, query_vecs."""
+    q_labels = []
+    q_veclists = []
+    for label, veclist in load_veclists(query_labels, query_paths):
+        q_labels.append(label)
+        q_veclists.append(veclist)
+    return q_labels, q_veclists
+
+
 def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
     """Return flattened_db_labels, flattened_db_vecs."""
     flattened_db_labels = []
     flattened_db_vecs = []
-    for label, veclist in load_veclists(db_paths):
+    for label, veclist in load_veclists(db_labels, db_paths):
         for vec in veclist:
             flattened_db_labels.append(label)
             flattened_db_vecs.append(vec)

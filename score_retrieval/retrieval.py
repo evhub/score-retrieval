@@ -13,7 +13,7 @@ from score_retrieval.data import (
     database_paths,
 )
 from score_retrieval.vec_db import (
-    load_veclists,
+    load_query_veclists,
     load_db_vecs,
 )
 
@@ -58,7 +58,7 @@ def run_retrieval(
     database_paths=database_paths,
 ):
     """Run image retrieval on the given database, query."""
-    q_labels, q_veclists = load_veclists(query_labels, query_paths)
+    q_labels, q_veclists = load_query_veclists(query_labels, query_paths)
 
     db_labels, db_vecs = load_db_vecs(database_labels, database_paths)
 
