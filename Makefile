@@ -7,6 +7,14 @@ clean:
 	find . -name '*.pyc' -delete
 	find . -name '__pycache__' -delete
 
+.PHONY: delete-images
+delete-images:
+	find . -name '*.png' -delete
+
+.PHONY: delete-vecs
+delete-vecs:
+	find . -name '*.npy' -delete
+
 .PHONY: pdfs-to-images
 pdfs-to-images:
 	python ./score_retrieval/migration.py
@@ -25,7 +33,3 @@ run-retrieval:
 
 .PHONY: run
 run: save-vecs run-retrieval
-
-.PHONY: delete-images
-delete-images:
-	find . -name '*.png' -delete
