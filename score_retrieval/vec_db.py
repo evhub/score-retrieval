@@ -25,16 +25,22 @@ def save_veclists(image_to_veclist_func, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
+
         image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-        assert image is not None, "imread({}) is None".format(path)
+        if image is None:
+            print("Got None for imread({}).".format(path))
+            continue
+
         raw_veclist = image_to_veclist_func(image)
         veclist = np.asarray([resample(vec) for vec in raw_veclist if vec.shape])
-        if veclist.shape and sum(veclist.shape) > 0:
-            assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
-            veclist_path = os.path.splitext(path)[0] + ".npy"
-            np.save(veclist_path, veclist)
-        else:
+
+        if not veclist.shape or sum(veclist.shape) == 0:
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
+            continue
+
+        assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
+        veclist_path = os.path.splitext(path)[0] + ".npy"
+        np.save(veclist_path, veclist)
 
 
 def load_veclists(image_labels, image_paths):
