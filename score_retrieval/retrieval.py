@@ -45,9 +45,11 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs):
     best_label = None
     best_score = float("inf")
     for label, score in total_scores.items():
+        print(">", label, score)
         if score < best_score:
             best_label = label
             best_score = score
+        print("<", best_label, best_score)
     return best_label
 
 
