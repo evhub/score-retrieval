@@ -12,10 +12,12 @@ from score_retrieval.constants import (
 )
 
 
-def index_images(dataset=DEFAULT_DATASET):
+def index_images(dataset=None):
     """Return an iterator of (label, path) for all images."""
     data_dir = DATA_DIR
-    if dataset is not None:
+    if dataset is None:
+        dataset = DEFAULT_DATASET
+    if dataset:
         data_dir = os.path.join(data_dir, dataset)
     for dirpath, _, filenames in os.walk(data_dir):
         for fname in filenames:
