@@ -66,6 +66,7 @@ def run_retrieval(
     total = 0
     for correct_label, veclist in zip(q_labels, q_veclists):
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs)
+        print("Guessed label {} for correct label {}.".format(guessed_label, correct_label))
         if guessed_label == correct_label:
             correct += 1
         total += 1
