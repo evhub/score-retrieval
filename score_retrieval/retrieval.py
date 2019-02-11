@@ -36,7 +36,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs):
 
 def retrieve_veclist(query_veclist, db_labels, db_vecs):
     """Find the label with the min sum of min L2s for each vector."""
-    total_scores = defaultdict(lambda: float("inf"))
+    total_scores = defaultdict(float)
     for query_vec in query_veclist:
         scores = retrieve_vec(query_vec, db_labels, db_vecs)
         for label, vec_score in scores.items():
@@ -45,11 +45,11 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs):
     best_label = None
     best_score = float("inf")
     for label, score in total_scores.items():
-        print(">", label, score)
         if score < best_score:
             best_label = label
             best_score = score
-        print("<", best_label, best_score)
+
+    print("Guessed label: {} (score: {})".format(best_label, best_score))
     return best_label
 
 
@@ -68,7 +68,7 @@ def run_retrieval(
     total = 0
     for correct_label, veclist in zip(q_labels, q_veclists):
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs)
-        print("Guessed label {} for correct label {}.".format(guessed_label, correct_label))
+        print("Correct label was: {}".format(correct_label))
         if guessed_label == correct_label:
             correct += 1
         total += 1
