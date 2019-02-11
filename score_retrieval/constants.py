@@ -13,3 +13,5 @@ DPI = 300
 SAMPLE = False
 
 VECTOR_LEN = 100
+
+DEFAULT_DATASET = "mini_dataset"

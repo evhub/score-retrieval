@@ -8,10 +8,11 @@ from score_retrieval.constants import (
     DATA_DIR,
     IMG_EXT,
     SAMPLE,
+    DEFAULT_DATASET,
 )
 
 
-def index_images(dataset=None):
+def index_images(dataset=DEFAULT_DATASET):
     """Return an iterator of (label, path) for all images."""
     data_dir = DATA_DIR
     if dataset is not None:
