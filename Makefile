@@ -32,4 +32,4 @@ run-retrieval:
 	python ./score_retrieval/retrieval.py
 
 .PHONY: run
-run: save-vecs run-retrieval
+run: delete-vecs save-vecs run-retrieval
