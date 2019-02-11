@@ -74,7 +74,7 @@ def run_retrieval(
         total += 1
 
     acc = correct/total
-    print("Got accuracy of {} for {} data points.".format(acc, total))
+    print("Got accuracy of {} ({}/{} correct).".format(acc, correct, total))
     return acc
 
 
