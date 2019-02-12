@@ -23,6 +23,11 @@ def resample(arr, resample_len=VECTOR_LEN):
     return out_arr
 
 
+def normalize(arr):
+    """Normalize array to constant mean and stdev."""
+    return (arr - np.mean(arr))/np.std(arr)
+
+
 def isnull(vec):
     """Determine whether the given vector is null."""
     return not vec.shape or sum(vec.shape) == 0
@@ -39,7 +44,7 @@ def save_veclists(image_to_veclist_func, dataset=None):
             continue
 
         raw_veclist = image_to_veclist_func(image)
-        veclist = np.asarray([resample(vec) for vec in raw_veclist if not isnull(vec)])
+        veclist = np.asarray([normalize(resample(vec)) for vec in raw_veclist if not isnull(vec)])
 
         if isnull(veclist):
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
