@@ -4,6 +4,9 @@ from collections import defaultdict
 
 import numpy as np
 from numpy.linalg import norm
+from scipy.spatial.distance import euclidean
+
+from fastdtw import fastdtw
 
 from score_retrieval.constants import VECTOR_LEN
 from score_retrieval.data import (
@@ -17,6 +20,8 @@ from score_retrieval.vec_db import (
     load_db_vecs,
 )
 
+def lineardtw(x, y):
+     return fastdtw(x, y, dist=euclidean)[0]
 
 def L2(vec1, vec2):
     """L2 norm between two vectors."""
