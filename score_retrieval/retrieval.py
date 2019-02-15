@@ -31,7 +31,7 @@ def L2(vec1, vec2, ignore_len_diffs=True):
         if ignore_len_diffs:
             return float("inf")
         else:
-            raise ValueError("{} != {}".format(vec1.shape, vec2.shape))
+            raise ValueError("L2 vec shapes not equal: {} != {}".format(vec1.shape, vec2.shape))
     return norm(vec1 - vec2, ord=2)
 
 
