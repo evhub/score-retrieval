@@ -5,7 +5,6 @@ from collections import defaultdict
 import numpy as np
 from numpy.linalg import norm
 from scipy.spatial.distance import euclidean
-
 from fastdtw import fastdtw
 
 from score_retrieval.constants import VECTOR_LEN
@@ -20,8 +19,11 @@ from score_retrieval.vec_db import (
     load_db_vecs,
 )
 
-def lineardtw(x, y):
-     return fastdtw(x, y, dist=euclidean)[0]
+
+def linearDTW(vec1, vec2):
+    """DTW distance between two vectors."""
+    return fastdtw(vec1, vec2, dist=euclidean)[0]
+
 
 def L2(vec1, vec2):
     """L2 norm between two vectors."""
@@ -29,11 +31,14 @@ def L2(vec1, vec2):
     return norm(vec1 - vec2, ord=2)
 
 
+DIST_METRIC = L2
+
+
 def retrieve_vec(query_vec, db_labels, db_vecs):
     """Find the value of the min L2 for each label in the database."""
     scores = defaultdict(lambda: float("inf"))
     for label, db_vec in zip(db_labels, db_vecs):
-        dist = L2(db_vec, query_vec)
+        dist = DIST_METRIC(db_vec, query_vec)
         scores[label] = min(scores[label], dist)
     return scores
 

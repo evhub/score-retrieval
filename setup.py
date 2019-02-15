@@ -9,6 +9,7 @@ setuptools.setup(
         "scipy",
         "pdf2image",
         "opencv-python",
+        "fastdtw",
     ],
     packages=setuptools.find_packages(),
 )
