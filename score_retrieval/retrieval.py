@@ -27,7 +27,7 @@ def linearDTW(vec1, vec2):
 
 def L2(vec1, vec2):
     """L2 norm between two vectors."""
-    assert vec1.shape == vec2.shape, "{} != {}".format(vec1, vec2)
+    assert vec1.shape == vec2.shape, "{} != {}".format(vec1.shape, vec2.shape)
     return norm(vec1 - vec2, ord=2)
 
 
