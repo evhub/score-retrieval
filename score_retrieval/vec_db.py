@@ -16,24 +16,24 @@ from score_retrieval.data import (
 from score_retrieval.constants import VECTOR_LEN
 
 
-def resample(arr, resample_len=VECTOR_LEN):
+def resample_arr(arr, resample_len=VECTOR_LEN):
     """Resample array to constant length."""
     out_arr = ss.resample(np.asarray(arr), resample_len)
     assert out_arr.shape == (resample_len,), "{}.shape == {} != ({},)".format(out_arr, out_arr.shape, resample_len)
     return out_arr
 
 
-def normalize(arr):
+def normalize_arr(arr):
     """Normalize array to constant mean and stdev."""
     return (arr - np.mean(arr))/np.std(arr)
 
 
-def isnull(vec):
-    """Determine whether the given vector is null."""
-    return not vec.shape or sum(vec.shape) == 0
+def isnull(arr):
+    """Determine whether the given array is null."""
+    return not arr.shape or sum(arr.shape) == 0
 
 
-def save_veclists(image_to_veclist_func, dataset=None):
+def save_veclists(image_to_veclist_func, resample=False, normalize=False, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
@@ -44,7 +44,15 @@ def save_veclists(image_to_veclist_func, dataset=None):
             continue
 
         raw_veclist = image_to_veclist_func(image)
-        veclist = np.asarray([normalize(resample(vec)) for vec in raw_veclist if not isnull(vec)])
+        veclist = []
+        for vec in raw_veclist:
+            if not isnull(vec):
+                if resample:
+                    vec = resample_arr(vec)
+                if normalize:
+                    vec = normalize_arr(vec)
+                veclist.append(vec)
+        veclist = np.asarray(veclist)
 
         if isnull(veclist):
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
@@ -91,4 +99,4 @@ def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
 
 if __name__ == "__main__":
     from score_splitter import create_waveforms
-    save_veclists(create_waveforms)
+    save_veclists(create_waveforms, resample=True, normalize=True)
