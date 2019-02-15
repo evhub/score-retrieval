@@ -58,7 +58,6 @@ def save_veclists(image_to_veclist_func, resample=False, normalize=False, datase
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
             continue
 
-        assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
         veclist_path = os.path.splitext(path)[0] + ".npy"
         np.save(veclist_path, veclist)
 
@@ -70,7 +69,6 @@ def load_veclists(image_labels, image_paths):
         if os.path.exists(veclist_path):
             print("Loading {}...".format(veclist_path))
             veclist = np.load(veclist_path)
-            assert veclist.shape[-1] == VECTOR_LEN, "{}.shape[-1] != {}".format(veclist.shape, VECTOR_LEN)
             yield label, veclist
         else:
             print("Skipping {}...".format(veclist_path))
