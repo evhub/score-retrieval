@@ -99,4 +99,4 @@ def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
 
 if __name__ == "__main__":
     from score_splitter import create_waveforms
-    save_veclists(create_waveforms, resample=True, normalize=True)
+    save_veclists(create_waveforms, resample=False, normalize=False)
