@@ -44,6 +44,9 @@ def save_veclists(image_to_veclist_func, resample=False, normalize=False, datase
             continue
 
         raw_veclist = image_to_veclist_func(image)
+        if raw_veclist is None:
+            continue
+
         veclist = []
         for vec in raw_veclist:
             if not isnull(vec):
