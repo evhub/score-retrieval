@@ -75,7 +75,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
     for label, inds in all_inds.items():
         x_vals = np.arange(0, len(inds))
         m, b, r, p, se = linregress(x_vals, inds)
-        linearity_scores[label] += LIN_SCORE_SCALE * (abs(m - 1) - r**2)
+        print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+        linearity_scores[label] += LIN_SCORE_SCALE * (np.abs(m - 1) - r**2)
 
     best_label = None
     best_score = float("inf")
@@ -87,6 +88,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
         total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
         print("total_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
 
+        # best score is the smallest total_socre
         if total_score < best_score:
             best_label = label
             best_score = total_score
