@@ -25,7 +25,7 @@ def linearDTW(vec1, vec2):
     return fastdtw(vec1, vec2, dist=euclidean)[0]
 
 
-def L2(vec1, vec2, ignore_len_diffs=True):
+def L2(vec1, vec2, ignore_len_diffs=False):
     """L2 norm between two vectors."""
     if vec1.shape != vec2.shape:
         if ignore_len_diffs:
