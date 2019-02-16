@@ -31,5 +31,5 @@ save-vecs:
 run-retrieval:
 	python ./score_retrieval/retrieval.py
 
-.PHONY: run
+.PHONY: run-all
 run: delete-vecs save-vecs run-retrieval
