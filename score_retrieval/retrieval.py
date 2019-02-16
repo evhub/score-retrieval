@@ -64,7 +64,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
     dist_scores = defaultdict(float)
     all_inds = defaultdict(list)
     for query_vec in query_veclist:
-        min_scores = retrieve_vec(query_vec, db_labels, db_vecs)
+        min_scores = retrieve_vec(query_vec, db_labels, db_vecs, db_inds)
         for label, (vec_score, vec_ind) in min_scores.items():
             dist_scores[label] += vec_score
             all_inds[label].append(vec_ind)
