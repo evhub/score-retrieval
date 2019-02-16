@@ -76,6 +76,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
         x_vals = np.arange(0, len(inds))
         m, b, r, p, se = linregress(x_vals, inds)
         print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+        if np.isnan(m):
+            print(label, inds, x_vals)
         linearity_scores[label] += LIN_SCORE_SCALE * (np.abs(m - 1) - r**2)
 
     best_label = None
