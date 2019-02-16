@@ -53,6 +53,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
 
 
 LIN_WEIGHT = 0.25
+SLOPE_WEIGHT = 0.5
 
 
 def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
@@ -68,8 +69,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
             dist_scores[label] += vec_score
             all_inds[label].append(vec_ind)
 
-    # calculate linearity by finding (abs(m - 1) - r^2) of the indices
-    #  (we take the negative so that smaller scores are better)
+    # calculate linearity by finding weighted abs(m - 1) - r^2 of the
+    #  indices (we take the negative so that smaller scores are better)
     linearity_scores = defaultdict(float)
 
     # only compute linearity scores if they will be weighted
@@ -87,7 +88,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
                 m, b, r, p, se = linregress(x_vals, inds)
                 print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
-            linearity_scores[label] += np.abs(m - 1) - r**2
+            linearity_scores[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
 
     best_label = None
     best_score = float("inf")
