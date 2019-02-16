@@ -5,6 +5,7 @@ from collections import defaultdict
 import numpy as np
 from numpy.linalg import norm
 from scipy.spatial.distance import euclidean
+from scipy.stats import linregress
 from fastdtw import fastdtw
 
 from score_retrieval.constants import VECTOR_LEN
@@ -38,29 +39,57 @@ def L2(vec1, vec2, ignore_len_diffs=False):
 DIST_METRIC = L2
 
 
-def retrieve_vec(query_vec, db_labels, db_vecs):
-    """Find the value of the min L2 for each label in the database."""
-    scores = defaultdict(lambda: float("inf"))
-    for label, db_vec in zip(db_labels, db_vecs):
+def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
+    """Find the value of the min dist and the index for that dist
+    for each label in the database."""
+    # generate dictionary mapping label to
+    #  (best_dist_for_label, ind_of_the_vec_with_that_dist)
+    min_scores = defaultdict(lambda: (float("inf"), None))
+    for label, db_vec, ind in zip(db_labels, db_vecs, db_inds):
         dist = DIST_METRIC(db_vec, query_vec)
-        scores[label] = min(scores[label], dist)
-    return scores
+        if dist <= min_scores[label][0]:
+            min_scores[label] = (dist, ind)
+    return min_scores
 
 
-def retrieve_veclist(query_veclist, db_labels, db_vecs):
-    """Find the label with the min sum of min L2s for each vector."""
-    total_scores = defaultdict(float)
+LIN_SCORE_SCALE = 1
+LIN_WEIGHT = 0.5
+
+
+def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
+    """Find the label with the min sum of min dist and mean change
+    in index for each vector."""
+    # sum best distances into dist_scores and
+    #  collect all best indices into all_inds
+    dist_scores = defaultdict(float)
+    all_inds = defaultdict(list)
     for query_vec in query_veclist:
-        scores = retrieve_vec(query_vec, db_labels, db_vecs)
-        for label, vec_score in scores.items():
-            total_scores[label] += vec_score
+        min_scores = retrieve_vec(query_vec, db_labels, db_vecs)
+        for label, (vec_score, vec_ind) in min_scores.items():
+            dist_scores[label] += vec_score
+            all_inds[label].append(vec_ind)
+
+    # calculate linearity by finding scale * (abs(m - 1) - r^2) of the
+    #  indices (we take the negative so that smaller scores are better)
+    linearity_scores = defaultdict(float)
+    for label, inds in all_inds.items():
+        x_vals = np.arange(0, len(inds))
+        m, b, r, p, se = linregress(x_vals, inds)
+        linearity_scores += LIN_SCORE_SCALE * (abs(m - 1) - r**2)
 
     best_label = None
     best_score = float("inf")
-    for label, score in total_scores.items():
-        if score < best_score:
+    for label in dist_scores:
+
+        # combine dist and linearity scores into a total score
+        dist_score = dist_scores[label]
+        linearity_score = linearity_scores[label]
+        total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
+        print("total_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
+
+        if total_score < best_score:
             best_label = label
-            best_score = score
+            best_score = total_score
 
     print("Guessed label: {} (score: {})".format(best_label, best_score))
     return best_label
@@ -75,12 +104,12 @@ def run_retrieval(
     """Run image retrieval on the given database, query."""
     q_labels, q_veclists = load_query_veclists(query_labels, query_paths)
 
-    db_labels, db_vecs = load_db_vecs(database_labels, database_paths)
+    db_labels, db_vecs, db_inds = load_db_vecs(database_labels, database_paths)
 
     correct = 0
     total = 0
     for correct_label, veclist in zip(q_labels, q_veclists):
-        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs)
+        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds)
         print("Correct label was: {}".format(correct_label))
         if guessed_label == correct_label:
             correct += 1

@@ -90,14 +90,16 @@ def load_query_veclists(query_labels=query_labels, query_paths=query_paths):
 
 
 def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
-    """Return flattened_db_labels, flattened_db_vecs."""
+    """Return db_labels, db_vecs, db_inds."""
     flattened_db_labels = []
     flattened_db_vecs = []
+    flattened_db_indices = []
     for label, veclist in load_veclists(db_labels, db_paths):
-        for vec in veclist:
+        for i, vec in enumerate(veclist):
             flattened_db_labels.append(label)
             flattened_db_vecs.append(vec)
-    return flattened_db_labels, flattened_db_vecs
+            flattened_db_indices.append(i)
+    return flattened_db_labels, flattened_db_vecs, flattened_db_indices
 
 
 if __name__ == "__main__":
