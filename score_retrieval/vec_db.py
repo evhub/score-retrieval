@@ -51,9 +51,9 @@ def save_veclists(image_to_veclist_func, resample=False, normalize=False, datase
                     vec = resample_arr(vec)
                 if normalize:
                     vec = normalize_arr(vec)
-                print("Got vector of shape {}.".format(vec.shape))
                 veclist.append(vec)
         veclist = np.asarray(veclist)
+        print("veclist.shape =", veclist.shape)
 
         if isnull(veclist):
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
