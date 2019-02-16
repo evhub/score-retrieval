@@ -20,7 +20,7 @@ from score_retrieval.vec_db import (
 )
 
 
-def linearDTW(vec1, vec2):
+def DTW(vec1, vec2):
     """DTW distance between two vectors."""
     return fastdtw(vec1, vec2, dist=euclidean)[0]
 
