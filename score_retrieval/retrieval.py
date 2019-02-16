@@ -53,7 +53,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
 
 
 LIN_SCORE_SCALE = 1
-LIN_WEIGHT = 0.5
+LIN_WEIGHT = 0.25
 
 
 def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
@@ -73,11 +73,18 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
     #  indices (we take the negative so that smaller scores are better)
     linearity_scores = defaultdict(float)
     for label, inds in all_inds.items():
-        x_vals = np.arange(0, len(inds))
-        m, b, r, p, se = linregress(x_vals, inds)
-        print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
-        if np.isnan(m):
-            print(label, inds, x_vals)
+
+        # assume perfect linearity for veclists of length 1
+        if len(inds) == 1:
+            m = 1
+            r = 1
+
+        # otherwise do linear regression to determine linearity
+        else:
+            x_vals = np.arange(0, len(inds))
+            m, b, r, p, se = linregress(x_vals, inds)
+            print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+
         linearity_scores[label] += LIN_SCORE_SCALE * (np.abs(m - 1) - r**2)
 
     best_label = None
