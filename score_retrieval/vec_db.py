@@ -38,7 +38,7 @@ def save_veclists(image_to_veclist_func, resample=False, normalize=False, datase
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
 
-        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        image = cv2.imread(path, cv2.IMREAD_COLOR)
         if image is None:
             print("Got None for imread({}).".format(path))
             continue
