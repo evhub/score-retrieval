@@ -33,12 +33,12 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
-def save_veclists(image_to_veclist_func, resample=False, normalize=False, dataset=None):
+def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normalize=False, dataset=None):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
 
-        image = cv2.imread(path, cv2.IMREAD_COLOR)
+        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
         if image is None:
             print("Got None for imread({}).".format(path))
             continue
@@ -104,7 +104,7 @@ def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
 
 if __name__ == "__main__":
     from score_splitter import create_waveforms
-    save_veclists(create_waveforms)
+    save_veclists(create_waveforms, grayscale=True)
     # from benchmarks import call_benchmark
     # def mk_benchmark_vec(image):
     #     resized_image = cv2.resize(image, (1024, 1024))
