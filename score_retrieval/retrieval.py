@@ -36,7 +36,12 @@ def L2(vec1, vec2, ignore_len_diffs=False):
     return norm(vec1 - vec2, ord=2)
 
 
-DIST_METRIC = L2
+def dot(vec1, vec2):
+    """Inner product between two vectors."""
+    return vec1.dot(vec2)
+
+
+DIST_METRIC = dot
 
 
 def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
