@@ -53,7 +53,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
 
 
 LIN_WEIGHT = 1
-SLOPE_WEIGHT = 1
+SLOPE_WEIGHT = 0
 
 
 def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
