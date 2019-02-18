@@ -22,7 +22,9 @@ def index_images(dataset=None):
     for dirpath, _, filenames in os.walk(data_dir):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:
-                yield dirpath, os.path.join(dirpath, fname)
+                img_path = os.path.join(dirpath, fname)
+                label = os.path.basename(dirpath)
+                yield label, img_path
 
 
 def index_by_label(dataset=None):
