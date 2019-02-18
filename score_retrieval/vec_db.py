@@ -107,5 +107,6 @@ if __name__ == "__main__":
     # save_veclists(create_waveforms)
     from benchmarks import call_benchmark
     def mk_benchmark_vec(image):
-        return call_benchmark(images=[image])
+        resized_image = cv2.resize(image, (1024, 1024))
+        return call_benchmark(images=[resized_image])
     save_veclists(mk_benchmark_vec)
