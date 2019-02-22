@@ -4,7 +4,7 @@ import traceback
 from pdf2image import convert_from_path
 
 from score_retrieval.constants import (
-    DATA_DIR,
+    get_dataset_dir,
     IMG_EXT,
     DPI,
     START_PAGE,
@@ -38,10 +38,11 @@ def save_pages(pdf_path, name, save_dir):
                 print("Saved {}.".format(page_path))
 
 
-def migrate_pdfs():
+def migrate_pdfs(dataset=None):
     """Migrate all pdfs to images."""
-    print("Migrating {}...".format(DATA_DIR))
-    for dirpath, _, filenames in os.walk(DATA_DIR):
+    data_dir = get_dataset_dir(dataset)
+    print("Migrating {}...".format(data_dir))
+    for dirpath, _, filenames in os.walk(data_dir):
         for pdf_file in filenames:
             name, ext = os.path.splitext(pdf_file)
             if ext == ".pdf":

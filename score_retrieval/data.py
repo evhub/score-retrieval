@@ -5,7 +5,7 @@ from collections import defaultdict
 from scipy.ndimage import imread
 
 from score_retrieval.constants import (
-    DATA_DIR,
+    get_dataset_dir,
     IMG_EXT,
     SAMPLE,
     DEFAULT_DATASET,
@@ -14,11 +14,7 @@ from score_retrieval.constants import (
 
 def index_images(dataset=None):
     """Return an iterator of (label, path) for all images."""
-    data_dir = DATA_DIR
-    if dataset is None:
-        dataset = DEFAULT_DATASET
-    if dataset:
-        data_dir = os.path.join(data_dir, dataset)
+    data_dir = get_dataset_dir(dataset)
     for dirpath, _, filenames in os.walk(data_dir):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:

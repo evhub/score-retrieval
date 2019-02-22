@@ -19,3 +19,13 @@ DEFAULT_DATASET = "mini_dataset"
 START_PAGE = None
 
 END_PAGE = None
+
+
+def get_dataset_dir(dataset=None):
+    """Get the directory for the given dataset."""
+    data_dir = DATA_DIR
+    if dataset is None:
+        dataset = DEFAULT_DATASET
+    if dataset:
+        data_dir = os.path.join(data_dir, dataset)
+    return data_dir
