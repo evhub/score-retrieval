@@ -104,12 +104,12 @@ def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
 
 if __name__ == "__main__":
     # Our method:
-    # from score_splitter import create_waveforms
-    # save_veclists(create_waveforms, grayscale=True)
+    from score_splitter import create_waveforms
+    save_veclists(create_waveforms, grayscale=True)
 
     # Benchmark method:
-    from benchmarks import call_benchmark
-    def mk_benchmark_vec(image):
-        resized_image = cv2.resize(image, (1024, 1024))
-        return call_benchmark(images=[resized_image])
-    save_veclists(mk_benchmark_vec)
+    # from benchmarks import call_benchmark
+    # def mk_benchmark_vec(image):
+    #     resized_image = cv2.resize(image, (1024, 1024))
+    #     return call_benchmark(images=[resized_image])
+    # save_veclists(mk_benchmark_vec)
