@@ -27,39 +27,51 @@ def index_images(dataset=None):
                 yield label, img_path
 
 
-def index_by_label(dataset=None):
-    """Return dictionary mapping labels to image paths."""
-    index = defaultdict(list)
+def index_by_label_and_name(dataset=None):
+    """Return dict mapping labels to dict mapping names to image paths."""
+    index = defaultdict(lambda: defaultdict(list))
     for label, img_path in index_images(dataset):
-        index[label].append(img_path)
+        name = os.path.basename(img_path).split("_", 1)[0]
+        index[label][name].append(img_path)
     return index
 
 
 def index_data(index=None, dataset=None, skip_queryless=True):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if index is None:
-        index = index_by_label(dataset)
+        index = index_by_label_and_name(dataset)
     database_paths = []
     database_labels = []
     query_paths = []
     query_labels = []
-    for label, img_paths in index.items():
-        if len(img_paths) < 2:
+    for label, name_index in index.items():
+
+        names = name_index.keys()
+        if len(name_index) < 2:
             if skip_queryless:
                 continue
-            head, tail = img_paths, []
+            head_names, tail_names = names, []
         else:
-            head, tail = img_paths[:-1], img_paths[-1]
-        database_paths += head
-        database_labels += [label]*len(head)
-        query_paths.append(tail)
+            head_names, tail_names = names[:-1], names[-1]
+
+        head_paths = []
+        for name in head_names:
+            head_paths.extend(name_index[name])
+
+        tail_paths = []
+        for name in tail_names:
+            tail_paths.extend(name_index[name])
+
+        database_paths += head_paths
+        database_labels += [label]*len(head_paths)
+        query_paths.append(tail_paths)
         query_labels.append(label)
     return database_paths, database_labels, query_paths, query_labels
 
 
 def sample_data(num_samples, dataset=None, seed=0):
     """Same as index_data, but only samples num_samples from the full dataset."""
-    index = index_by_label(dataset)
+    index = index_by_label_and_name(dataset)
     # we want the sampling to be deterministic and inclusive of previous samples
     random.seed(seed)
     sampled_index = []

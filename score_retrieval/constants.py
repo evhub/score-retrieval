@@ -15,3 +15,7 @@ SAMPLE = False
 VECTOR_LEN = 128
 
 DEFAULT_DATASET = "mini_dataset"
+
+START_PAGE = None
+
+END_PAGE = None
