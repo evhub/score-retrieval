@@ -11,8 +11,6 @@ from fastdtw import fastdtw
 from score_retrieval.constants import VECTOR_LEN
 from score_retrieval.data import (
     query_paths,
-    query_labels,
-    database_labels,
     database_paths,
 )
 from score_retrieval.vec_db import (
@@ -114,16 +112,11 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
     return best_label
 
 
-def run_retrieval(
-    query_labels=query_labels,
-    query_paths=query_paths,
-    database_labels=database_labels,
-    database_paths=database_paths,
-):
+def run_retrieval(query_paths=query_paths, database_paths=database_paths):
     """Run image retrieval on the given database, query."""
-    q_labels, q_veclists = load_query_veclists(query_labels, query_paths)
+    q_labels, q_veclists = load_query_veclists(query_paths)
 
-    db_labels, db_vecs, db_inds = load_db_vecs(database_labels, database_paths)
+    db_labels, db_vecs, db_inds = load_db_vecs(database_paths)
 
     correct = 0
     total = 0
