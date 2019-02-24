@@ -8,10 +8,10 @@ from scipy import signal as ss
 
 from score_retrieval.data import (
     index_images,
-    database_labels,
     database_paths,
-    query_labels,
     query_paths,
+    index_by_label_and_name,
+    get_label,
 )
 from score_retrieval.constants import VECTOR_LEN
 
@@ -67,39 +67,63 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
         np.save(veclist_path, veclist)
 
 
-def load_veclists(image_labels, image_paths):
-    """Yield (label, veclist) for the given image paths."""
-    for label, path in zip(image_labels, image_paths):
-        veclist_path = os.path.splitext(path)[0] + ".npy"
-        if os.path.exists(veclist_path):
-            print("Loading {}...".format(veclist_path))
-            veclist = np.load(veclist_path)
-            yield label, veclist
-        else:
-            print("Skipping {}...".format(veclist_path))
+def load_veclist(image_path):
+    """Return veclist or None for the given image path."""
+    veclist_path = os.path.splitext(image_path)[0] + ".npy"
+    if os.path.exists(veclist_path):
+        print("Loading {}...".format(veclist_path))
+        return np.load(veclist_path)
+    else:
+        print("Skipping {}...".format(veclist_path))
+        return None
 
 
-def load_query_veclists(query_labels=query_labels, query_paths=query_paths):
-    """Return query_labels, query_vecs."""
+def load_query_veclists(query_paths=query_paths):
+    """Return q_labels, q_veclists."""
     q_labels = []
     q_veclists = []
-    for label, veclist in load_veclists(query_labels, query_paths):
-        q_labels.append(label)
-        q_veclists.append(veclist)
+    for path in query_paths:
+        veclist = load_veclist(path)
+        if veclist is not None:
+            label = get_label(path)
+            for i, vec in enumerate(veclist):
+                q_labels.append(label)
+                q_veclists.append(veclist)
     return q_labels, q_veclists
 
 
-def load_db_vecs(db_labels=database_labels, db_paths=database_paths):
+def load_db_vecs(db_paths=database_paths):
     """Return db_labels, db_vecs, db_inds."""
-    flattened_db_labels = []
-    flattened_db_vecs = []
-    flattened_db_indices = []
-    for label, veclist in load_veclists(db_labels, db_paths):
-        for i, vec in enumerate(veclist):
-            flattened_db_labels.append(label)
-            flattened_db_vecs.append(vec)
-            flattened_db_indices.append(i)
-    return flattened_db_labels, flattened_db_vecs, flattened_db_indices
+    db_labels = []
+    db_vecs = []
+    db_indices = []
+
+    # sort images into groups based on their order in their piece
+    base_index = index_by_label_and_name(query_paths)
+    for label, label_index in base_index.items():
+        for name, name_index in label_index.items()
+
+            # generate sequences of sequential images from the same label
+            sequences = [[]]
+            for img_path in name_index:
+                veclist = load_veclist(img_path)
+                if veclist is None:
+                    if sequences[-1]:
+                        sequences.append([])
+                else:
+                    sequences[-1].append(veclist)
+
+            # for each sequence put the vectors in the database with the right index
+            for seq in sequences:
+                i = 0
+                for veclist in seq:
+                    for vec in veclist:
+                        db_labels.append(label)
+                        db_vecs.append(vec)
+                        db_indices.append(i)
+                        i += 1
+
+    return db_labels, db_vecs, db_indices
 
 
 if __name__ == "__main__":

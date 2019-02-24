@@ -12,6 +12,12 @@ from score_retrieval.constants import (
 )
 
 
+def get_label(image_path):
+    """Get the label for the given image."""
+    dirpath = os.path.dirname(image_path)
+    return os.path.basename(dirpath)
+
+
 def index_images(dataset=None):
     """Return an iterator of (label, path) for all images."""
     data_dir = get_dataset_dir(dataset)
@@ -19,16 +25,22 @@ def index_images(dataset=None):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:
                 img_path = os.path.join(dirpath, fname)
-                label = os.path.basename(dirpath)
-                yield label, img_path
+                yield get_label(img_path), img_path
 
 
-def index_by_label_and_name(dataset=None):
+def index_by_label_and_name(dataset=None, sort=False):
     """Return dict mapping labels to dict mapping names to image paths."""
     index = defaultdict(lambda: defaultdict(list))
     for label, img_path in index_images(dataset):
-        name = os.path.basename(img_path).split("_", 1)[0]
-        index[label][name].append(img_path)
+        name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
+        ind = int(ind)
+        group = index[label][name]
+        if sort:
+            while len(group) <= ind:
+                group.append(None)
+            group[ind] = img_path
+        else:
+            group.append(img_path)
     return index
 
 
