@@ -55,7 +55,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
     return min_scores
 
 
-LIN_WEIGHT = 0.5
+LIN_WEIGHT = 0.25
 SLOPE_WEIGHT = 0.25
 
 
