@@ -100,12 +100,12 @@ def load_db_vecs(db_paths=database_paths):
 
     # sort images into groups based on their order in their piece
     base_index = index_by_label_and_name(query_paths)
-    for label, label_index in base_index.items():
-        for name, name_index in label_index.items():
+    for label, name_index in base_index.items():
+        for name, paths in name_index.items():
 
             # generate sequences of sequential images from the same label
             sequences = [[]]
-            for img_path in name_index:
+            for img_path in paths:
                 veclist = load_veclist(img_path)
                 if veclist is None:
                     if sequences[-1]:

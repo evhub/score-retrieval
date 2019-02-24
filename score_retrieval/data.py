@@ -44,15 +44,15 @@ def index_by_label_and_name(dataset=None, sort=False):
     return index
 
 
-def index_data(index=None, dataset=None, skip_queryless=True):
+def index_data(base_index=None, dataset=None, skip_queryless=True):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
-    if index is None:
-        index = index_by_label_and_name(dataset)
+    if base_index is None:
+        base_index = index_by_label_and_name(dataset)
     database_paths = []
     database_labels = []
     query_paths = []
     query_labels = []
-    for label, name_index in index.items():
+    for label, name_index in base_index.items():
 
         names = tuple(name_index.keys())
         if len(name_index) < 2:
@@ -60,7 +60,7 @@ def index_data(index=None, dataset=None, skip_queryless=True):
                 continue
             head_names, tail_names = names, []
         else:
-            head_names, tail_names = names[:-1], names[-1]
+            head_names, tail_names = names[:-1], names[-1:]
 
         head_paths = []
         for name in head_names:
