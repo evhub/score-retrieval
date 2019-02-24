@@ -73,8 +73,8 @@ def index_data(base_index=None, dataset=None, skip_queryless=True):
         database_paths.extend(head_paths)
         database_labels.extend([label]*len(head_paths))
 
-        database_paths.extend(tail_paths)
-        database_labels.extend([label]*len(tail_paths))
+        query_paths.extend(tail_paths)
+        query_labels.extend([label]*len(tail_paths))
 
     return database_paths, database_labels, query_paths, query_labels
 
