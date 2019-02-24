@@ -89,7 +89,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
             else:
                 x_vals = np.arange(0, len(inds))
                 m, b, r, p, se = linregress(x_vals, inds)
-                print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+                if debug:
+                    print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
             linearity_scores[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
 
