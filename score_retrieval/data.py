@@ -28,10 +28,10 @@ def index_images(dataset=None):
                 yield get_label(img_path), img_path
 
 
-def index_by_label_and_name(dataset=None, sort=False):
+def gen_label_name_index(indexed_images, sort=False):
     """Return dict mapping labels to dict mapping names to image paths."""
     index = defaultdict(lambda: defaultdict(list))
-    for label, img_path in index_images(dataset):
+    for label, img_path in indexed_images:
         name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
         ind = int(ind)
         group = index[label][name]
@@ -42,6 +42,11 @@ def index_by_label_and_name(dataset=None, sort=False):
         else:
             group.append(img_path)
     return index
+
+
+def index_by_label_and_name(dataset=None, sort=False):
+    """Run gen_label_name_index on the given dataset."""
+    return gen_label_name_index(index_images(dataset), sort=sort)
 
 
 def index_data(base_index=None, dataset=None, skip_queryless=True):

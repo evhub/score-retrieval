@@ -10,7 +10,7 @@ from score_retrieval.data import (
     index_images,
     database_paths,
     query_paths,
-    index_by_label_and_name,
+    gen_label_name_index,
     get_label,
 )
 from score_retrieval.constants import VECTOR_LEN
@@ -98,8 +98,13 @@ def load_db_vecs(db_paths=database_paths):
     db_vecs = []
     db_indices = []
 
+    # generate db index
+    db_index = []
+    for path in db_paths:
+        db_index.append((get_label(path), path))
+
     # sort images into groups based on their order in their piece
-    base_index = index_by_label_and_name(query_paths)
+    base_index = gen_label_name_index(db_index)
     for label, name_index in base_index.items():
         for name, paths in name_index.items():
 
