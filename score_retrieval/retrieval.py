@@ -59,7 +59,7 @@ LIN_WEIGHT = 0.25
 SLOPE_WEIGHT = 0.25
 
 
-def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
+def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
     # sum best distances into dist_scores and
@@ -101,7 +101,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds):
         dist_score = dist_scores[label]
         linearity_score = linearity_scores[label]
         total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
-        print("total_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
+        if debug:
+            print("total_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
 
         # best score is the smallest total_socre
         if total_score < best_score:
