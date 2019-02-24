@@ -36,7 +36,7 @@ def L2(vec1, vec2, ignore_len_diffs=False):
 
 def dot(vec1, vec2):
     """Inner product between two vectors."""
-    return -np.dot(vec1.T, vec2)/4
+    return -np.dot(vec1.T, vec2)/3
 
 
 DIST_METRIC = L2
