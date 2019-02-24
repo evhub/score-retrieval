@@ -39,7 +39,7 @@ def dot(vec1, vec2):
     return -np.dot(vec1.T, vec2)/4
 
 
-DIST_METRIC = dot
+DIST_METRIC = L2
 
 
 def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
@@ -55,7 +55,7 @@ def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
     return min_scores
 
 
-LIN_WEIGHT = 0.25
+LIN_WEIGHT = 0.5
 SLOPE_WEIGHT = 0.25
 
 
