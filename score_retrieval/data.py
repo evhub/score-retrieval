@@ -55,25 +55,22 @@ def index_data(base_index=None, dataset=None, skip_queryless=True):
     for label, name_index in base_index.items():
 
         names = tuple(name_index.keys())
-        if len(name_index) < 2:
+        if len(names) < 2:
             if skip_queryless:
                 continue
             head_names, tail_names = names, []
         else:
             head_names, tail_names = names[:-1], names[-1:]
 
-        head_paths = []
-        for name in head_names:
-            head_paths.extend(name_index[name])
-
-        tail_paths = []
-        for name in tail_names:
-            tail_paths.extend(name_index[name])
+        head_paths = [name_index[name] for name in head_names]
+        tail_paths = [name_index[name] for name in tail_names]
 
         database_paths += head_paths
         database_labels += [label]*len(head_paths)
-        query_paths.append(tail_paths)
-        query_labels.append(label)
+
+        database_paths += tail_paths
+        database_labels += [label]*len(tail_paths)
+
     return database_paths, database_labels, query_paths, query_labels
 
 
