@@ -14,8 +14,10 @@ from score_retrieval.constants import (
 
 def get_label(image_path):
     """Get the label for the given image."""
-    dirpath = os.path.dirname(image_path)
-    return os.path.basename(dirpath)
+    piece_dir = os.path.dirname(image_path)
+    composer_dir = os.path.dirname(piece_dir)
+    dataset_dir = os.path.dirname(composer_dir)
+    return os.path.relpath(piece_dir, dataset_dir)
 
 
 def index_images(dataset=None):
