@@ -42,7 +42,7 @@ def index_data(index=None, dataset=None, skip_queryless=True):
     query_labels = []
     for label, name_index in index.items():
 
-        names = name_index.keys()
+        names = tuple(name_index.keys())
         if len(name_index) < 2:
             if skip_queryless:
                 continue
