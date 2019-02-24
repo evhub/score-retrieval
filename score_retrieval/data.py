@@ -62,14 +62,19 @@ def index_data(base_index=None, dataset=None, skip_queryless=True):
         else:
             head_names, tail_names = names[:-1], names[-1:]
 
-        head_paths = [name_index[name] for name in head_names]
-        tail_paths = [name_index[name] for name in tail_names]
+        head_paths = []
+        for name in head_names:
+            head_paths.extend(name_index[name])
 
-        database_paths += head_paths
-        database_labels += [label]*len(head_paths)
+        tail_paths = []
+        for name in tail_names:
+            tail_paths.extend(name_index[name])
 
-        database_paths += tail_paths
-        database_labels += [label]*len(tail_paths)
+        database_paths.extend(head_paths)
+        database_labels.extend([label]*len(head_paths))
+
+        database_paths.extend(tail_paths)
+        database_labels.extend([label]*len(tail_paths))
 
     return database_paths, database_labels, query_paths, query_labels
 
