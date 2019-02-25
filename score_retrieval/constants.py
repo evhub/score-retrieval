@@ -2,11 +2,10 @@ import os
 import re
 
 
-HTML_DIR = "/data1/dbashir/Project/results"
-
-SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>.*Piano.*\n</td>", flags=re.U)
-
 SCRAPE_DIR = "/data1/dbashir/Project/score_scrape/results/composer"
+HTML_DIR = "/data1/dbashir/Project/results"
+HTML_EXT = ".txt"
+SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>.*Piano.*\n</td>", flags=re.U)
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
@@ -22,7 +21,6 @@ VECTOR_LEN = 128
 DEFAULT_DATASET = "mini_dataset"
 
 START_PAGE = None
-
 END_PAGE = None
 
 

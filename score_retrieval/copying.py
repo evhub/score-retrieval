@@ -10,6 +10,7 @@ from score_retrieval.constants import (
     DATA_DIR,
     HTML_DIR,
     SEARCH_HTML_FOR,
+    HTML_EXT,
 )
 
 if sys.version_info < (3,):
@@ -18,24 +19,28 @@ if sys.version_info < (3,):
 
 def index_all_pieces():
     """Index all the piece directories in the scrape directory."""
+    all_pieces = []
+    num_no_html = 0
+    num_bad_html = 0
     for dirpath, _, filenames in os.walk(SCRAPE_DIR):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
                 if SEARCH_HTML_FOR:
                     name = os.path.splitext(fname)[0]
-                    html_path = os.path.join(HTML_DIR, name + ".txt")
+                    html_path = os.path.join(HTML_DIR, name + HTML_EXT)
                     if not os.path.exists(html_path):
-                        print("Skipping: {} (no HTML found)".format(dirpath))
-                        break
+                        num_no_html += 1
+                        continue
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
-                        if SEARCH_HTML_FOR.search(html):
-                            print("Found desired string in HTML for {}.".format(dirpath))
-                        else:
-                            print("Skipping: {} (desired regex not in HTML)".format(dirpath))
+                        if not SEARCH_HTML_FOR.search(html):
+                            num_bad_html += 1
                             break
-                yield dirpath
+                all_pieces.append(dirpath)
                 break
+    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).")
+    return all_pieces
+
 
 
 def copy_data(dataset_name, num_pieces):
@@ -44,7 +49,7 @@ def copy_data(dataset_name, num_pieces):
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
     print("Copying {} pieces...".format(num_pieces))
-    all_pieces = list(index_all_pieces())
+    all_pieces = index_all_pieces()
     for dirpath in random.sample(all_pieces, num_pieces):
         relpath = os.path.relpath(dirpath, SCRAPE_DIR)
         newpath = os.path.join(data_dir, relpath)
