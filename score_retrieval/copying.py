@@ -24,12 +24,15 @@ def index_all_pieces():
                 if SEARCH_HTML_FOR:
                     name = os.path.splitext(fname)[0]
                     html_path = os.path.join(HTML_DIR, name + ".txt")
+                    if not os.path.exists(html_path):
+                        print("Skipping: {} (no HTML found)".format(dirpath))
+                        break
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
                         if SEARCH_HTML_FOR.search(html):
                             print("Found desired string in HTML for {}.".format(dirpath))
                         else:
-                            print("Skipping: {} (due to HTML)".format(dirpath))
+                            print("Skipping: {} (desired regex not in HTML)".format(dirpath))
                             break
                 yield dirpath
                 break
