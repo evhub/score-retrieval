@@ -22,7 +22,9 @@ def index_all_pieces():
                     html_path = os.path.join(HTML_DIR, name + ".txt")
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
-                        if not SEARCH_HTML_FOR.search(html):
+                        if SEARCH_HTML_FOR.search(html):
+                            print("Found desired string in HTML for {}.".format(dirpath))
+                        else:
                             print("Skipping: {} (due to HTML)".format(dirpath))
                             break
                 yield dirpath
