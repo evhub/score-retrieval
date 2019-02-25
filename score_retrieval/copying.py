@@ -48,20 +48,21 @@ def copy_data(dataset_name, num_pieces):
     data_dir = os.path.join(DATA_DIR, dataset_name)
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
-    print("Copying {} pieces...".format(num_pieces))
+    print("Indexing pieces...")
     all_pieces = index_all_pieces()
+    print("Copying {} pieces...".format(num_pieces))
     for dirpath in random.sample(all_pieces, num_pieces):
         relpath = os.path.relpath(dirpath, SCRAPE_DIR)
         newpath = os.path.join(data_dir, relpath)
         print("Saving: {} -> {}".format(dirpath, newpath))
         try:
             shutil.copytree(dirpath, newpath)
-        except shutil.Error:
+        except Exception:
             traceback.print_exc()
             print("Skipping: {} -> {}".format(dirpath, newpath))
 
 
 if __name__ == "__main__":
     dataset_name = input("enter name of new dataset: ")
-    num_pieces = int(input("enter number of pieces to attempt to copy: "))
+    num_pieces = int(input("enter number of pieces to copy: "))
     copy_data(dataset_name, num_pieces)
