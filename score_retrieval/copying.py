@@ -20,8 +20,7 @@ if sys.version_info < (3,):
 def index_all_pieces():
     """Index all the piece directories in the scrape directory."""
     all_pieces = []
-    num_no_html = 0
-    num_bad_html = 0
+    num_missing_html = 0
     for dirpath, _, filenames in os.walk(SCRAPE_DIR):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
@@ -29,16 +28,15 @@ def index_all_pieces():
                     name = os.path.splitext(fname)[0]
                     html_path = os.path.join(HTML_DIR, name + HTML_EXT)
                     if not os.path.exists(html_path):
-                        num_no_html += 1
                         continue
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
                         if not SEARCH_HTML_FOR.search(html):
-                            num_bad_html += 1
+                            num_missing_html += 1
                             break
                 all_pieces.append(dirpath)
                 break
-    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(len(all_pieces), num_no_html, num_bad_html))
+    print("Indexed {} pieces ({} were missing desired regex in their HTML).".format(len(all_pieces), num_missing_html))
     return all_pieces
 
 
