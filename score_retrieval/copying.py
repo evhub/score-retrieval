@@ -38,7 +38,7 @@ def index_all_pieces():
                             break
                 all_pieces.append(dirpath)
                 break
-    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).")
+    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(len(all_pieces), num_no_html, num_bad_html))
     return all_pieces
 
 
