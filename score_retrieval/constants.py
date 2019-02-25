@@ -1,7 +1,12 @@
 import os
+import re
 
 
-SCRAPE_DIR = "/data1/dbashir/Project/score_scrape/results/composer"
+HTML_DIR = "/data1/dbashir/Project/score_scrape/results"
+
+SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>.*Piano.*\n</td>", flags=re.U)
+
+SCRAPE_DIR = os.path.join(HTML_DIR, "composer")
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
