@@ -3,6 +3,7 @@ import random
 import shutil
 import traceback
 import re
+import sys
 
 from score_retrieval.constants import (
     SCRAPE_DIR,
@@ -10,6 +11,9 @@ from score_retrieval.constants import (
     HTML_DIR,
     SEARCH_HTML_FOR,
 )
+
+if sys.version_info < (3,):
+    input = raw_input
 
 
 def index_all_pieces():
