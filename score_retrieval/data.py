@@ -1,3 +1,5 @@
+from __future__ import divison
+
 import os
 import random
 from collections import defaultdict
@@ -7,9 +9,10 @@ from scipy.ndimage import imread
 from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
-    SAMPLE,
     DEFAULT_DATASET,
     MAX_QUERIES_PER_LABEL,
+    TEST_RATIO,
+    TRAIN_RATIO,
 )
 
 
@@ -52,10 +55,10 @@ def index_by_label_and_name(dataset=None, sort=False):
     return gen_label_name_index(index_images(dataset), sort=sort)
 
 
-def index_data(base_index=None, dataset=None, skip_queryless=True, max_queries_per_label=MAX_QUERIES_PER_LABEL):
+def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_QUERIES_PER_LABEL):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if base_index is None:
-        base_index = index_by_label_and_name(dataset)
+        base_index = index_by_label_and_name()
     database_paths = []
     database_labels = []
     query_paths = []
@@ -90,23 +93,51 @@ def index_data(base_index=None, dataset=None, skip_queryless=True, max_queries_p
     return database_paths, database_labels, query_paths, query_labels
 
 
-def sample_data(num_samples, dataset=None, seed=0):
-    """Same as index_data, but only samples num_samples from the full dataset."""
-    index = index_by_label_and_name(dataset)
+def get_split_indexes(split_ratios, base_index=None, seed=0):
+    """Splits the given index into the given portions."""
+    if base_index is None:
+        base_index = index_by_label_and_name()
+
+    # generate cumulative ratios
+    cum_split_ratios = []
+    cum_ratio = 0
+    for ratio in split_ratios:
+        cum_split_ratios.append(cum_ratio + ratio)
+        cum_ratio += ratio
+
     # we want the sampling to be deterministic and inclusive of previous samples
     random.seed(seed)
-    sampled_index = []
-    while len(sampled_index) < num_samples:
-        choice = random.choice(index.items())
-        if choice not in sampled_index:
-            sampled_index.append(choice)
-    return index_data(sampled_index)
+
+    # split index
+    shuffled_index = random.sample(base_index.keys(), len(base_index))
+    split_indexes = [{} for _ in range(len(cum_split_ratios))]
+    for i, k in enumerate(shuffled_index):
+        v = base_index[k]
+        ratio_thru = i/len(base_index)
+        for j, split_ratio in enumerate(cum_split_ratios):
+            if ratio_thru <= split_ratio:
+                split_indexes[j][k] = v
+                break
+    return split_indexes
 
 
-if SAMPLE:
-    database_paths, database_labels, query_paths, query_labels = sample_data(SAMPLE)
-else:
-    database_paths, database_labels, query_paths, query_labels = index_data()
+def deindex(base_index):
+    """Convert a label name index into paths, labels."""
+    paths = []
+    labels = []
+    for label, name_index in base_index.items():
+        for name, img_path in name_index.items():
+            paths.append(img_path)
+            labels.append(label)
+    return paths, labels
+
+
+test_label_name_index, train_label_name_index = get_split_indexes([
+    TEST_RATIO,
+    TRAIN_RATIO,
+])
+database_paths, database_labels, query_paths, query_labels = index_data(test_label_name_index)
+train_paths, train_labels = deindex(train_label_name_index)
 
 
 def indices_with_label(target_label, labels):
