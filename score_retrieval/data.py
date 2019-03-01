@@ -13,14 +13,27 @@ from score_retrieval.constants import (
     MAX_QUERIES_PER_LABEL,
     TEST_RATIO,
     TRAIN_RATIO,
+    DATA_DIR,
 )
+
+
+def top_dir(path):
+    """Get the top-level directory of the given path."""
+    while True:
+        head, tail = os.path.split(path)
+        if not head:
+            return tail
+        elif not tail:
+            return head
+        else:
+            path = head
 
 
 def get_label(image_path):
     """Get the label for the given image."""
+    rel_path = os.path.relpath(image_path, DATA_DIR)
+    dataset_dir = os.path.join(DATA_DIR, top_dir(rel_path))
     piece_dir = os.path.dirname(image_path)
-    composer_dir = os.path.dirname(piece_dir)
-    dataset_dir = os.path.dirname(composer_dir)
     return os.path.relpath(piece_dir, dataset_dir)
 
 
