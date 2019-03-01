@@ -9,6 +9,7 @@ SCRAPE_DIR = "/data1/dbashir/Project/score_scrape/results/composer"
 HTML_DIR = "/data1/dbashir/Project/results"
 HTML_EXT = ".txt"
 SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>.*Piano.*\n</td>", flags=re.U)
+
 # data migration constants
 IMG_EXT = ".png"
 DPI = 50
