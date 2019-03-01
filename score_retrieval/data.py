@@ -163,6 +163,14 @@ database_paths, database_labels, query_paths, query_labels = index_data(
 )
 
 
+# display lengths when run directly
+if __name__ == "__main__":
+    print("dataset:", DEFAULT_DATASET)
+    print("training images:", len(train_paths))
+    print("database images:", len(database_paths))
+    print("query images:", len(query_paths))
+
+
 def indices_with_label(target_label, labels):
     """Get indices in labels with target_label."""
     indices = []
