@@ -55,7 +55,16 @@ def index_by_label_and_name(dataset=None, sort=False):
     return gen_label_name_index(index_images(dataset), sort=sort)
 
 
-def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_QUERIES_PER_LABEL):
+def append_names(names, paths, labels, label, name_index):
+    """Append all given names to the given paths, labels."""
+    new_paths = []
+    for name in names:
+        new_paths.extend(name_index[name])
+    paths.extend(new_paths)
+    labels.extend([label]*len(new_paths))
+
+
+def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_QUERIES_PER_LABEL, excess_paths=None, excess_labels=None):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if base_index is None:
         base_index = index_by_label_and_name()
@@ -74,21 +83,14 @@ def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_Q
             head_names, tail_names = names[:-1], names[-1:]
 
         if max_queries_per_label:
-            tail_names = tail_names[max_queries_per_label:]
+            tail_names, excess_names = tail_names[max_queries_per_label:], tail_names[max_queries_per_label:]
+        else:
+            excess_names = []
 
-        head_paths = []
-        for name in head_names:
-            head_paths.extend(name_index[name])
-
-        tail_paths = []
-        for name in tail_names:
-            tail_paths.extend(name_index[name])
-
-        database_paths.extend(head_paths)
-        database_labels.extend([label]*len(head_paths))
-
-        query_paths.extend(tail_paths)
-        query_labels.extend([label]*len(tail_paths))
+        append_names(head_names, database_paths, database_labels, label, name_index)
+        append_names(tail_names, query_paths, query_labels, label, name_index)
+        if excess_paths is not None:
+            append_names(excess_names, excess_paths, excess_labels, label, name_index)
 
     return database_paths, database_labels, query_paths, query_labels
 
@@ -133,12 +135,19 @@ def deindex(base_index):
     return paths, labels
 
 
-test_label_name_index, train_label_name_index = get_split_indexes([
-    TEST_RATIO,
+# generate train and test data
+train_label_name_index, test_label_name_index = get_split_indexes([
     TRAIN_RATIO,
+    TEST_RATIO,
 ])
-database_paths, database_labels, query_paths, query_labels = index_data(test_label_name_index)
+
 train_paths, train_labels = deindex(train_label_name_index)
+
+database_paths, database_labels, query_paths, query_labels = index_data(
+    test_label_name_index,
+    excess_paths=train_paths,
+    excess_labels=train_labels,
+)
 
 
 def indices_with_label(target_label, labels):
