@@ -18,9 +18,9 @@ END_PAGE = None
 
 # dataset constants
 DEFAULT_DATASET = "piano_dataset"
-MAX_QUERIES_PER_LABEL = 4
-TEST_RATIO = 0.2
-TRAIN_RATIO = 0.8
+MAX_QUERIES_PER_LABEL = None
+TEST_RATIO = 1.0
+TRAIN_RATIO = 0.0
 
 # retrieval constants
 VECTOR_LEN = 128

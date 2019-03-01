@@ -48,11 +48,46 @@ def index_images(dataset=None):
                 yield get_label(img_path), img_path
 
 
+def indices_with_label(target_label, labels):
+    """Get indices in labels with target_label."""
+    indices = []
+    for i, label in enumerate(labels):
+        if label == target_label:
+            indices.append(i)
+    return indices
+
+
+def load_img(img_path, grayscale=True):
+    """Load an image."""
+    cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
+
+
+def load_data(dataset=None, grayscale=True):
+    """Return an iterator of (label, image) for all images."""
+    for label, img_path in index_images(dataset):
+        yield label, load_img(img_path, grayscale=grayscale)
+
+
+def get_basename_to_path_dict(dataset=None):
+    """Generate a dictionary mapping basenames of images to their paths."""
+    basename_to_path = {}
+    for _, path in index_images(dataset):
+        basename = os.path.basename(path)
+        basename_to_path[basename] = path
+    return basename_to_path
+
+
+def get_name_ind(img_path):
+    """Get the name and index of the given image."""
+    name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
+    return name, ind
+
+
 def gen_label_name_index(indexed_images, sort=False):
     """Return dict mapping labels to dict mapping names to image paths."""
     index = defaultdict(lambda: defaultdict(list))
     for label, img_path in indexed_images:
-        name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
+        name, ind = get_name_ind(img_path)
         ind = int(ind)
         group = index[label][name]
         if sort:
@@ -150,6 +185,15 @@ def deindex(base_index):
     return paths, labels
 
 
+def num_names(paths):
+    """Get the number of unique names in paths."""
+    name_set = set()
+    for img_path in paths:
+        name, ind = get_name_ind(img_path)
+        name_set.add(name)
+    return len(name_set)
+
+
 # generate train and test data
 test_label_name_index, train_label_name_index = get_split_indexes([
     TEST_RATIO,
@@ -167,37 +211,14 @@ database_paths, database_labels, query_paths, query_labels = index_data(
 
 # display lengths when run directly
 if __name__ == "__main__":
-    print("dataset:", DEFAULT_DATASET)
-    print("database images:", len(database_paths))
-    print("query images:", len(query_paths))
-    print("training images:", len(train_paths))
-    print("total images:", len(train_paths) + len(database_paths) + len(query_paths))
-
-
-def indices_with_label(target_label, labels):
-    """Get indices in labels with target_label."""
-    indices = []
-    for i, label in enumerate(labels):
-        if label == target_label:
-            indices.append(i)
-    return indices
-
-
-def load_img(img_path, grayscale=True):
-    """Load an image."""
-    cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
-
-
-def load_data(dataset=None, grayscale=True):
-    """Return an iterator of (label, image) for all images."""
-    for label, img_path in index_images(dataset):
-        yield label, load_img(img_path, grayscale=grayscale)
-
-
-def get_basename_to_path_dict(dataset=None):
-    """Generate a dictionary mapping basenames of images to their paths."""
-    basename_to_path = {}
-    for _, path in index_images(dataset):
-        basename = os.path.basename(path)
-        basename_to_path[basename] = path
-    return basename_to_path
+    print("dataset: {}".format(DEFAULT_DATASET))
+    num_db_names = num_names(database_paths)
+    print("database: {} images from {} pdfs".format(len(database_paths), num_db_names))
+    num_query_names = num_names(query_paths)
+    print("query: {} images from {} pdfs".format(len(query_paths), num_query_names))
+    num_train_names = num_names(train_paths)
+    print("train: {} images from {} pdfs".format(len(train_paths), num_train_names))
+    print("total: {} images from {} pdfs".format(
+        len(train_paths) + len(database_paths) + len(query_paths),
+        num_db_names + num_query_names + num_train_names,
+    ))
