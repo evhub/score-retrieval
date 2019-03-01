@@ -94,7 +94,7 @@ def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_Q
                 continue
             head_names, tail_names = names, []
         else:
-            head_names, tail_names = names[:-1], names[-1:]
+            head_names, tail_names = names[:1], names[1:]
 
         if max_queries_per_label:
             tail_names, excess_names = tail_names[max_queries_per_label:], tail_names[max_queries_per_label:]
