@@ -149,9 +149,9 @@ def deindex(base_index):
 
 
 # generate train and test data
-train_label_name_index, test_label_name_index = get_split_indexes([
-    TRAIN_RATIO,
+test_label_name_index, train_label_name_index = get_split_indexes([
     TEST_RATIO,
+    TRAIN_RATIO,
 ])
 
 train_paths, train_labels = deindex(train_label_name_index)
@@ -169,6 +169,7 @@ if __name__ == "__main__":
     print("training images:", len(train_paths))
     print("database images:", len(database_paths))
     print("query images:", len(query_paths))
+    print("total images:", len(train_paths) + len(database_paths) + len(query_paths))
 
 
 def indices_with_label(target_label, labels):
