@@ -1,6 +1,7 @@
 from __future__ import division
 
 import os
+import sys
 import random
 from collections import defaultdict
 
@@ -119,6 +120,7 @@ def get_split_indexes(split_ratios, base_index=None, seed=0):
     for ratio in split_ratios:
         cum_split_ratios.append(cum_ratio + ratio)
         cum_ratio += ratio
+    cum_split_ratios[-1] += sys.float_info.epsilon
 
     # deterministically shuffle index
     random.seed(seed)
@@ -130,7 +132,7 @@ def get_split_indexes(split_ratios, base_index=None, seed=0):
         v = base_index[k]
         ratio_thru = i/len(base_index)
         for j, split_ratio in enumerate(cum_split_ratios):
-            if ratio_thru <= split_ratio:
+            if ratio_thru < split_ratio:
                 split_indexes[j][k] = v
                 break
     return split_indexes
