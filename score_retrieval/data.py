@@ -9,6 +9,7 @@ from score_retrieval.constants import (
     IMG_EXT,
     SAMPLE,
     DEFAULT_DATASET,
+    MAX_QUERIES_PER_LABEL,
 )
 
 
@@ -51,7 +52,7 @@ def index_by_label_and_name(dataset=None, sort=False):
     return gen_label_name_index(index_images(dataset), sort=sort)
 
 
-def index_data(base_index=None, dataset=None, skip_queryless=True):
+def index_data(base_index=None, dataset=None, skip_queryless=True, max_queries_per_label=MAX_QUERIES_PER_LABEL):
     """Return database_paths, database_labels, query_paths, query_labels lists."""
     if base_index is None:
         base_index = index_by_label_and_name(dataset)
@@ -68,6 +69,9 @@ def index_data(base_index=None, dataset=None, skip_queryless=True):
             head_names, tail_names = names, []
         else:
             head_names, tail_names = names[:-1], names[-1:]
+
+        if max_queries_per_label:
+            tail_names = tail_names[max_queries_per_label:]
 
         head_paths = []
         for name in head_names:

@@ -13,6 +13,8 @@ IMG_EXT = ".png"
 
 DPI = 50
 
+MAX_QUERIES_PER_LABEL = 5
+
 # size of the subset of the data to sample
 SAMPLE = False
 
