@@ -105,11 +105,11 @@ def get_split_indexes(split_ratios, base_index=None, seed=0):
         cum_split_ratios.append(cum_ratio + ratio)
         cum_ratio += ratio
 
-    # we want the sampling to be deterministic and inclusive of previous samples
+    # deterministically shuffle index
     random.seed(seed)
+    shuffled_index = random.sample(base_index.keys(), len(base_index))
 
     # split index
-    shuffled_index = random.sample(base_index.keys(), len(base_index))
     split_indexes = [{} for _ in range(len(cum_split_ratios))]
     for i, k in enumerate(shuffled_index):
         v = base_index[k]
@@ -126,9 +126,10 @@ def deindex(base_index):
     paths = []
     labels = []
     for label, name_index in base_index.items():
-        for name, img_path in name_index.items():
-            paths.append(img_path)
-            labels.append(label)
+        for name, name_paths in name_index.items():
+            for img_path in name_paths:
+                paths.append(img_path)
+                labels.append(label)
     return paths, labels
 
 
