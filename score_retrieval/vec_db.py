@@ -12,6 +12,7 @@ from score_retrieval.data import (
     query_paths,
     gen_label_name_index,
     get_label,
+    load_img,
 )
 from score_retrieval.constants import VECTOR_LEN
 
@@ -38,7 +39,7 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
 
-        image = cv2.imread(path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
+        image = load_img(path, grayscale=grayscale)
         if image is None:
             print("Got None for imread({}).".format(path))
             continue

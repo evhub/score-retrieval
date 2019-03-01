@@ -1,10 +1,10 @@
-from __future__ import divison
+from __future__ import division
 
 import os
 import random
 from collections import defaultdict
 
-from scipy.ndimage import imread
+import cv2
 
 from score_retrieval.constants import (
     get_dataset_dir,
@@ -149,10 +149,15 @@ def indices_with_label(target_label, labels):
     return indices
 
 
-def load_data(dataset=None):
+def load_img(img_path, grayscale=True):
+    """Load an image."""
+    cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
+
+
+def load_data(dataset=None, grayscale=True):
     """Return an iterator of (label, image) for all images."""
     for label, img_path in index_images(dataset):
-        yield label, imread(img_path)
+        yield label, load_img(img_path, grayscale=grayscale)
 
 
 def get_basename_to_path_dict(dataset=None):
