@@ -32,7 +32,10 @@ run-retrieval:
 	python ./score_retrieval/retrieval.py
 
 .PHONY: run-all
-run-all: delete-vecs save-vecs run-retrieval
+run-all: save-vecs run-retrieval
+
+.PHONY: clean-run
+clean-run: delete-vecs run-all
 
 .PHONY: index-data
 index-data:
