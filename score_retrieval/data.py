@@ -59,7 +59,7 @@ def indices_with_label(target_label, labels):
 
 def load_img(img_path, grayscale=True):
     """Load an image."""
-    cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
+    return cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
 
 
 def load_data(dataset=None, grayscale=True):
