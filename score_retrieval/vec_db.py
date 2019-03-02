@@ -34,7 +34,7 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
-def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normalize=False, dataset=None):
+def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normalize=False, dataset=None, debug=False):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
@@ -43,10 +43,12 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
         if image is None:
             print("Got None for imread({}).".format(path))
             continue
+        if debug:
+            print("image.shape =", image.shape)
 
         raw_veclist = image_to_veclist_func(image)
         if raw_veclist is None:
-            print("Got None raw_veclist from image {}.".format(path))
+            print("Got None raw_vecliqst from image {}.".format(path))
             continue
 
         veclist = []
@@ -58,11 +60,12 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
                     vec = normalize_arr(vec)
                 veclist.append(vec)
         veclist = np.asarray(veclist)
-        print("veclist.shape =", veclist.shape)
 
         if isnull(veclist):
             print("Got null veclist for {} with shape {} (raw len {}).".format(path, veclist.shape, len(raw_veclist)))
             continue
+        if debug:
+            print("veclist.shape =", veclist.shape)
 
         veclist_path = os.path.splitext(path)[0] + ".npy"
         np.save(veclist_path, veclist)
