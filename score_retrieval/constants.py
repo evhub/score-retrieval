@@ -20,7 +20,7 @@ END_PAGE = None
 DEFAULT_DATASET = "piano_dataset"
 MAX_QUERIES_PER_LABEL = 1
 TEST_RATIO = 0.15
-TRAIN_RATIO = 0.1
+TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = False
 
 # retrieval constants

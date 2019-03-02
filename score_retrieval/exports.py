@@ -8,6 +8,7 @@ from score_retrieval.data import (
     indices_with_label,
 )
 
+
 gnd = [
     {
         "ok": indices_with_label(label, image_labels),
