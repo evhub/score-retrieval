@@ -15,6 +15,7 @@ from score_retrieval.constants import (
     TEST_RATIO,
     TRAIN_RATIO,
     DATA_DIR,
+    TRAIN_ON_EXCESS,
 )
 
 
@@ -204,8 +205,8 @@ train_paths, train_labels = deindex(train_label_name_index)
 
 database_paths, database_labels, query_paths, query_labels = index_data(
     test_label_name_index,
-    excess_paths=train_paths,
-    excess_labels=train_labels,
+    excess_paths=train_paths if TRAIN_ON_EXCESS else None,
+    excess_labels=train_labels if TRAIN_ON_EXCESS else None,
 )
 
 
