@@ -62,7 +62,7 @@ def rep_count(repeat, limit):
             ind += 1
 
 db = {
-    "cluster": list(rep_count(CLUSTER_LEN, len(train_query_images))),
+    "cluster": list(rep_count(CLUSTER_LEN, len(train_images))),
     "qidxs": range(len(train_query_images)),
     "pidxs": [
         len(train_query_images)
