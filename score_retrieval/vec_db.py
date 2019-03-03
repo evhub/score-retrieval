@@ -48,7 +48,7 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
 
         raw_veclist = image_to_veclist_func(image)
         if raw_veclist is None:
-            print("Got None raw_vecliqst from image {}.".format(path))
+            print("Got None raw_veclist from image {}.".format(path))
             continue
 
         veclist = []
