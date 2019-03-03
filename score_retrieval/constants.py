@@ -1,6 +1,9 @@
 import os
 import re
+import random
 
+
+random.seed(0)
 
 DATA_DIR = "/home/ehubinger/score-retrieval/data"
 
@@ -25,6 +28,9 @@ TRAIN_ON_EXCESS = False
 
 # retrieval constants
 VECTOR_LEN = 128
+
+# exporting constants
+CLUSTER_LEN = 78
 
 
 def get_dataset_dir(dataset=None):

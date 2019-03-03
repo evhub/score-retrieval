@@ -145,7 +145,7 @@ def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_Q
     return database_paths, database_labels, query_paths, query_labels
 
 
-def get_split_indexes(split_ratios, base_index=None, seed=0):
+def get_split_indexes(split_ratios, base_index=None):
     """Splits the given index into the given portions."""
     if base_index is None:
         base_index = index_by_label_and_name()
@@ -159,7 +159,6 @@ def get_split_indexes(split_ratios, base_index=None, seed=0):
     cum_split_ratios[-1] += sys.float_info.epsilon
 
     # deterministically shuffle index
-    random.seed(seed)
     shuffled_index = random.sample(base_index.keys(), len(base_index))
 
     # split index
