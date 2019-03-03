@@ -28,7 +28,7 @@ MAX_QUERIES_PER_LABEL = None  # 1
 TEST_RATIO = 1.0  # 0.15
 TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = False
-EXPORT_TEST_DATA = True  # False
+EXPORT_TEST_AS_TRAIN = True  # False
 
 # retrieval constants
 VECTOR_LEN = 128

@@ -2,7 +2,7 @@ import random
 
 from score_retrieval.constants import (
     CLUSTER_LEN,
-    EXPORT_TEST_DATA,
+    EXPORT_TEST_AS_TRAIN,
 )
 from score_retrieval.data import (
     database_paths as images,
@@ -32,7 +32,7 @@ cfg = {
 
 bbxs = None
 
-if EXPORT_TEST_DATA:
+if EXPORT_TEST_AS_TRAIN:
     train_db_images, train_db_labels, train_query_images, train_query_labels = images, image_labels, qimages, qimage_labels
 else:
     train_db_images, train_db_labels, train_query_images, train_query_labels = index_data(train_label_name_index)
