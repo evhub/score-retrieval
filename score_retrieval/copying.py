@@ -21,7 +21,9 @@ def index_pieces(num_pieces):
     got_pieces = 0
     num_missing_html = 0
     num_missing_regex = 0
-    for dirpath, _, filenames in os.walk(SCRAPE_DIR):
+    complete_walk = list(os.walk(SCRAPE_DIR))
+    random.shuffle(complete_walk)
+    for dirpath, _, filenames in complete_walk:
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
                 if SEARCH_HTML_FOR:
