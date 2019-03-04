@@ -7,7 +7,7 @@ random.seed(0)
 
 DATA_DIR = "/home/ehubinger/score-retrieval/data"
 if not os.path.exists(DATA_DIR):
-    print("Could not find main data dir, defaulting to local data dir.")
+    print("Could not find data dir {}, defaulting to local data dir.".format(DATA_DIR))
     DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
 # data copying constants
