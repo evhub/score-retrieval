@@ -13,7 +13,7 @@ if not os.path.exists(DATA_DIR):
 # data copying constants
 SCRAPE_DIR = "/data1/dbashir/Project/score_scrape/results/composer"
 HTML_FNAME = "html.txt"
-SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>.*Piano.*\n</td>", flags=re.U)
+SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>\s*Piano\s*\n</td>", flags=re.U)
 
 # data migration constants
 IMG_EXT = ".png"
