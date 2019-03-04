@@ -34,7 +34,7 @@ EXPORT_TEST_AS_TRAIN = True  # False
 VECTOR_LEN = 128
 
 # exporting constants
-CLUSTER_LEN = 78
+CLUSTER_LEN = 64
 
 
 def get_dataset_dir(dataset=None):
