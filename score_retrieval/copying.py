@@ -8,7 +8,6 @@ import sys
 from score_retrieval.constants import (
     SCRAPE_DIR,
     DATA_DIR,
-    HTML_DIR,
     SEARCH_HTML_FOR,
     HTML_FNAME,
 )
