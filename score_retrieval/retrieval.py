@@ -19,37 +19,40 @@ from score_retrieval.vec_db import (
 )
 
 
-def DTW(vec1, vec2):
-    """DTW distance between two vectors."""
-    return fastdtw(vec1, vec2, dist=euclidean)[0]
+def DTW(arr1, arr2):
+    """DTW distance between two arrays."""
+    dist_arr = np.zeros((arr1.shape[0], arr2.shape[0]))
+    for i, vec1 in enumerate(arr1):
+        for j, vec2 in enumerate(arr2):
+            dist_arr[i, j] = fastdtw(arr1, arr2, dist=euclidean)[0]
+    return dist_arr
 
 
-def L2(vec1, vec2, ignore_len_diffs=False):
-    """L2 norm between two vectors."""
-    if vec1.shape != vec2.shape:
-        if ignore_len_diffs:
-            return float("inf")
-        else:
-            raise ValueError("L2 vec shapes not equal: {} != {}".format(vec1.shape, vec2.shape))
-    return norm(vec1 - vec2, ord=2)
+def L2(arr1, arr2):
+    """L2 norm between two arrays."""
+    diff_arr = np.zeros((arr1.shape[0], arr2.shape[0], arr1.shape[1]))
+    for i, vec1 in enumerate(arr1):
+        for j, vec2 in enumerate(arr2):
+            diff_arr[i, j] = vec1 - vec2
+    return norm(diff_arr, axis=-1, ord=2)
 
 
-def dot(vec1, vec2):
-    """Inner product between two vectors."""
-    return -np.dot(vec1.T, vec2)/3
+def dot(arr1, arr2):
+    """Inner product between two arrays."""
+    return -np.dot(arr1.T, arr2)/3
 
 
 DIST_METRIC = L2
 
 
-def retrieve_vec(query_vec, db_labels, db_vecs, db_inds):
+def retrieve_vec(query_ind, dist_arr, db_labels, db_inds):
     """Find the value of the min dist and the index for that dist
     for each label in the database."""
     # generate dictionary mapping label to
     #  (best_dist_for_label, ind_of_the_vec_with_that_dist)
     min_scores = defaultdict(lambda: (float("inf"), None))
-    for label, db_vec, ind in zip(db_labels, db_vecs, db_inds):
-        dist = DIST_METRIC(db_vec, query_vec)
+    for db_ind, (label, ind) in enumerate(zip(db_labels, db_inds)):
+        dist = dist_arr[db_ind, query_ind]
         if dist <= min_scores[label][0]:
             min_scores[label] = (dist, ind)
     return min_scores
@@ -62,12 +65,16 @@ SLOPE_WEIGHT = 0.25
 def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
+    # precompute distance matrix
+    dist_arr = DIST_METRIC(np.asarray(db_vecs), np.asarray(query_veclist))
+    assert dist_arr.shape == (len(db_vecs), len(query_veclist)), "{} != {}".format(dist_arr.shape, (len(db_vecs), len(query_veclist)))
+
     # sum best distances into dist_scores and
     #  collect all best indices into all_inds
     dist_scores = defaultdict(float)
     all_inds = defaultdict(list)
-    for query_vec in query_veclist:
-        min_scores = retrieve_vec(query_vec, db_labels, db_vecs, db_inds)
+    for i in range(len(query_veclist)):
+        min_scores = retrieve_vec(i, dist_arr, db_labels, db_inds)
         for label, (vec_score, vec_ind) in min_scores.items():
             dist_scores[label] += vec_score
             all_inds[label].append(vec_ind)
