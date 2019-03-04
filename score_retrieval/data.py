@@ -74,6 +74,8 @@ def get_basename_to_path_dict(dataset=None):
     basename_to_path = {}
     for _, path in index_images(dataset):
         basename = os.path.basename(path)
+        if basename in basename_to_path:
+            raise IndexError("found duplicate image index {}".format(basename))
         basename_to_path[basename] = path
     return basename_to_path
 
