@@ -16,9 +16,9 @@ if sys.version_info < (3,):
     input = raw_input
 
 
-def index_all_pieces():
+def index_pieces(num_pieces):
     """Index all the piece directories in the scrape directory."""
-    all_pieces = []
+    got_pieces = 0
     num_missing_html = 0
     num_missing_regex = 0
     for dirpath, _, filenames in os.walk(SCRAPE_DIR):
@@ -34,11 +34,12 @@ def index_all_pieces():
                         if not SEARCH_HTML_FOR.search(html):
                             num_missing_regex += 1
                             break
-                all_pieces.append(dirpath)
+                got_pieces += 1
+                yield dirpath
                 break
-    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(len(all_pieces), num_missing_html, num_missing_regex))
-    return all_pieces
-
+        if got_pieces >= num_pieces:
+            break
+    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(got_pieces, num_missing_html, num_missing_regex))
 
 
 def copy_data(dataset_name, num_pieces):
@@ -46,10 +47,8 @@ def copy_data(dataset_name, num_pieces):
     data_dir = os.path.join(DATA_DIR, dataset_name)
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
-    print("Indexing pieces...")
-    all_pieces = index_all_pieces()
     print("Copying {} pieces...".format(num_pieces))
-    for dirpath in random.sample(all_pieces, num_pieces):
+    for dirpath in index_pieces(num_pieces):
         relpath = os.path.relpath(dirpath, SCRAPE_DIR)
         newpath = os.path.join(data_dir, relpath)
         print("Saving: {} -> {}".format(dirpath, newpath))
