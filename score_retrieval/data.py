@@ -58,12 +58,12 @@ def indices_with_label(target_label, labels):
     return indices
 
 
-def load_img(img_path, grayscale=True):
+def load_img(img_path, grayscale=False):
     """Load an image."""
     return cv2.imread(img_path, cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR)
 
 
-def load_data(dataset=None, grayscale=True):
+def load_data(dataset=None, grayscale=False):
     """Return an iterator of (label, image) for all images."""
     for label, img_path in index_images(dataset):
         yield label, load_img(img_path, grayscale=grayscale)
