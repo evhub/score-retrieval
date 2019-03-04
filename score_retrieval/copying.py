@@ -10,7 +10,7 @@ from score_retrieval.constants import (
     DATA_DIR,
     HTML_DIR,
     SEARCH_HTML_FOR,
-    HTML_EXT,
+    HTML_FNAME,
 )
 
 if sys.version_info < (3,):
@@ -21,22 +21,23 @@ def index_all_pieces():
     """Index all the piece directories in the scrape directory."""
     all_pieces = []
     num_missing_html = 0
+    num_missing_regex = 0
     for dirpath, _, filenames in os.walk(SCRAPE_DIR):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
                 if SEARCH_HTML_FOR:
-                    name = os.path.splitext(fname)[0]
-                    html_path = os.path.join(HTML_DIR, name + HTML_EXT)
+                    html_path = os.path.join(dirpath, HTML_FNAME)
                     if not os.path.exists(html_path):
-                        continue
+                        num_missing_html += 1
+                        break
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
                         if not SEARCH_HTML_FOR.search(html):
-                            num_missing_html += 1
+                            num_missing_regex += 1
                             break
                 all_pieces.append(dirpath)
                 break
-    print("Indexed {} pieces ({} were missing desired regex in their HTML).".format(len(all_pieces), num_missing_html))
+    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(len(all_pieces), num_missing_html, num_missing_regex))
     return all_pieces
 
 
