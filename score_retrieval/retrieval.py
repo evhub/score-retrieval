@@ -105,7 +105,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
     for label in dist_scores:
 
         # combine dist and linearity scores into a total score
-        dist_score = dist_scores[label]
+        dist_score = dist_scores[label]/len(query_veclist)
         linearity_score = linearity_scores[label]
         total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
         if debug:
@@ -120,7 +120,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
     return best_label
 
 
-def run_retrieval(query_paths=query_paths, database_paths=database_paths):
+def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=False):
     """Run image retrieval on the given database, query."""
     q_labels, q_veclists = load_query_veclists(query_paths)
 
@@ -129,7 +129,7 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths):
     correct = 0
     total = 0
     for correct_label, veclist in zip(q_labels, q_veclists):
-        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds)
+        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, debug=debug)
         print("Correct label was: {}".format(correct_label))
         if guessed_label == correct_label:
             correct += 1
