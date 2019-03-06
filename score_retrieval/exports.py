@@ -10,11 +10,10 @@ from score_retrieval.data import (
     query_paths as qimages,
     query_labels as qimage_labels,
     indices_with_label,
-    train_label_name_index,
-    index_data,
 )
 
 
+# testing exports
 gnd = [
     {
         "ok": indices_with_label(label, image_labels),
@@ -32,18 +31,23 @@ cfg = {
 
 bbxs = None
 
+
+# training exports
 if EXPORT_TEST_AS_TRAIN:
-    train_db_images, train_db_labels, train_query_images, train_query_labels = images, image_labels, qimages, qimage_labels
+    train_images = images + qimages
+    train_labels = image_labels + qimage_labels
 else:
-    train_db_images, train_db_labels, train_query_images, train_query_labels = index_data(train_label_name_index)
+    from score_retrieval.data import (
+    train_paths as train_images,
+    train_labels,
+)
 
-train_images = train_query_images + train_db_images
 
-def random_index(label_list, label):
+def random_index(label_list, label, not_ind):
     """Choose random index from labels with the given label."""
     correct_indices = []
     for i, test_label in enumerate(label_list):
-        if test_label == label:
+        if test_label == label and i != not_ind:
             correct_indices.append(i)
     return random.choice(correct_indices)
 
@@ -63,10 +67,9 @@ def rep_count(repeat, limit):
 
 db = {
     "cluster": list(rep_count(CLUSTER_LEN, len(train_images))),
-    "qidxs": range(len(train_query_images)),
+    "qidxs": range(len(train_images)),
     "pidxs": [
-        len(train_query_images)
-        + random_index(train_db_labels, label)
-        for i, label in enumerate(train_query_labels)
+        len(images) + random_index(train_labels, label, i)
+        for i, label in enumerate(train_labels)
     ],
 }
