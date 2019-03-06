@@ -110,21 +110,14 @@ def load_db_vecs(db_paths=database_paths):
     base_index = gen_label_name_index(db_index)
     for label, name_index in base_index.items():
         for name, paths in name_index.items():
-
-            # generate sequences of sequential images from the same label
-            sequences = [[]]
+            # for each sequence of sequential images put the vectors
+            #  in the database with the right index
+            i = 0
             for img_path in paths:
                 veclist = load_veclist(img_path)
                 if veclist is None:
-                    if sequences[-1]:
-                        sequences.append([])
+                    i = 0
                 else:
-                    sequences[-1].append(veclist)
-
-            # for each sequence put the vectors in the database with the right index
-            for seq in sequences:
-                i = 0
-                for veclist in seq:
                     for vec in veclist:
                         db_labels.append(label)
                         db_vecs.append(vec)
