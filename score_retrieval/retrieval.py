@@ -30,9 +30,10 @@ def DTW(arr1, arr2):
 def L2(arr1, arr2):
     """L2 norm between two arrays."""
     diff_arr = np.zeros((arr1.shape[0], arr2.shape[0], arr1.shape[1]))
-    for i, vec1 in enumerate(arr1):
-        for j, vec2 in enumerate(arr2):
-            diff_arr[i, j] = vec1 - vec2
+    for i in range(diff_arr.shape[1]):
+        diff_arr[:, i, :] = arr1
+    for i in range(diff_arr.shape[0]):
+        diff_arr[i, :, :] -= arr2
     return norm(diff_arr, axis=-1, ord=2)
 
 
