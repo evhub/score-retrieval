@@ -114,7 +114,9 @@ def load_db_vecs(db_paths=database_paths):
             i = 0
             for img_path in paths:
                 veclist = load_veclist(img_path)
-                if veclist is not None:
+                if veclist is None:
+                    i += 1
+                else:
                     for vec in veclist:
                         db_labels.append(label)
                         db_vecs.append(vec)
