@@ -43,49 +43,43 @@ def dot(arr1, arr2):
 
 
 DIST_METRIC = L2
-
-
-def retrieve_vec(query_ind, dist_arr, db_labels, db_inds):
-    """Find the value of the min dist and the index for that dist
-    for each label in the database."""
-    # generate dictionary mapping label to
-    #  (best_dist_for_label, ind_of_the_vec_with_that_dist)
-    min_scores = defaultdict(lambda: (float("inf"), None))
-    for db_ind, (label, ind) in enumerate(zip(db_labels, db_inds)):
-        dist = dist_arr[db_ind, query_ind]
-        if dist <= min_scores[label][0]:
-            min_scores[label] = (dist, ind)
-    return min_scores
-
-
 LIN_WEIGHT = 0.1
 SLOPE_WEIGHT = 0.25
 
 
-def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
+def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
-    # precompute distance matrix
-    dist_arr = DIST_METRIC(np.asarray(db_vecs), np.asarray(query_veclist))
-    assert dist_arr.shape == (len(db_vecs), len(query_veclist)), "{} != {}".format(dist_arr.shape, (len(db_vecs), len(query_veclist)))
+    # constants
+    num_labels = len(label_set)
+    num_qvecs = len(query_veclist)
+    num_dbvecs = len(db_vecs)
 
-    # sum best distances into sum_vec_scores and
-    #  collect all best indices into all_inds
-    sum_vec_scores = defaultdict(float)
-    all_inds = defaultdict(list)
-    for i in range(len(query_veclist)):
-        min_scores = retrieve_vec(i, dist_arr, db_labels, db_inds)
-        for label, (vec_score, vec_ind) in min_scores.items():
-            sum_vec_scores[label] += vec_score
-            all_inds[label].append(vec_ind)
+    # precompute distance matrix
+    dist_arr = DIST_METRIC(np.asarray(query_veclist), np.asarray(db_vecs))
+    assert dist_arr.shape == (num_qvecs, num_dbvecs), "{} != {}".format(dist_arr.shape, (num_qvecs, num_dbvecs))
+
+    # generate arrays mapping query to label to
+    #  best_dist_for_label and ind_of_the_vec_with_that_dist
+    min_losses = np.full((num_labels, num_qvecs), float("inf"))
+    min_inds = np.zeros((num_labels, num_qvecs), dtype=int)
+    for qi in range(num_qvecs):
+        for dbi, (label, ind) in enumerate(zip(db_labels, db_inds)):
+            dist = dist_arr[qi, dbi]
+            if dist <= min_losses[label, qi]:
+                min_losses[label, qi] = dist
+                min_inds[label, qi] = ind
+
+    # sum best distances into sum_min_losses
+    sum_min_losses = np.sum(min_losses, axis=-1)
 
     # calculate linearity by finding weighted abs(m - 1) - r^2 of the
-    #  indices (we take the negative so that smaller scores are better)
-    linearity_scores = defaultdict(float)
+    #  indices (we take the negative so that smaller losses are better)
+    linearity_losses = np.zeros(num_labels)
 
-    # only compute linearity scores if they will be weighted
+    # only compute linearity losses if they will be weighted
     if LIN_WEIGHT > 0:
-        for label, inds in all_inds.items():
+        for label, inds in enumerate(min_inds):
 
             # assume perfect linearity for veclists of length 1
             if len(inds) == 1:
@@ -99,39 +93,35 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
                 if debug:
                     print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
-            linearity_scores[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
+            linearity_losses[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
 
-    best_label = None
-    best_score = float("inf")
-    for label in sum_vec_scores:
+    # calculate total losses
+    dist_losses = sum_min_losses/num_qvecs
+    total_losses = (1 - LIN_WEIGHT) * dist_losses + LIN_WEIGHT * linearity_losses
 
-        # combine dist and linearity scores into a total score
-        dist_score = sum_vec_scores[label]/len(query_veclist)
-        linearity_score = linearity_scores[label]
-        total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
-        if debug:
-            print("\ttotal_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
+    # find the best label
+    best_label = np.argmin(total_losses)
+    best_label_str = label_set[best_label]
 
-        # best score is the smallest total_socre
-        if total_score < best_score:
-            best_label = label
-            best_score = total_score
+    # print debug info
+    print("\tGuessed label: {}\n\t(loss: {:.5f}; dist loss: {:.5f}; lin loss: {:.5f})".format(
+        best_label_str, total_losses[best_label], dist_losses[best_label], linearity_losses[best_label]))
 
-    print("\tGuessed label: {}\n\t(score: {:.5f}; dist score: {:.5f}; lin score: {:.5f})".format(
-        best_label, best_score, sum_vec_scores[best_label]/len(query_veclist), linearity_scores[best_label]))
-    return best_label
+    return best_label_str
 
 
 def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=False):
     """Run image retrieval on the given database, query."""
-    q_labels, q_veclists = load_query_veclists(query_paths)
+    q_label_strs, q_veclists = load_query_veclists(query_paths)
+    db_label_strs, db_vecs, db_inds = load_db_vecs(database_paths)
 
-    db_labels, db_vecs, db_inds = load_db_vecs(database_paths)
+    label_set = list(set(db_label_strs))
+    db_labels = [label_set.index(label) for label in db_label_strs]
 
     correct = 0
-    for i, (correct_label, veclist) in enumerate(zip(q_labels, q_veclists)):
+    for i, (correct_label, veclist) in enumerate(zip(q_label_strs, q_veclists)):
         print("({}/{}) Correct label: {}".format(i+1, len(q_veclists), correct_label))
-        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, debug=debug)
+        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, label_set, debug=debug)
         if guessed_label == correct_label:
             correct += 1
 
