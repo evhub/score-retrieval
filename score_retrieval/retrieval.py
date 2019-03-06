@@ -19,7 +19,7 @@ from score_retrieval.vec_db import (
 
 
 def DTW(arr1, arr2):
-    """DTW distance between two arrays."""
+    """DTW distance matrix between the vectors contained in the two arrays."""
     dist_arr = np.zeros((arr1.shape[0], arr2.shape[0]))
     for i, vec1 in enumerate(arr1):
         for j, vec2 in enumerate(arr2):
@@ -28,7 +28,7 @@ def DTW(arr1, arr2):
 
 
 def L2(arr1, arr2):
-    """L2 norm between two arrays."""
+    """Euclidean distance matrix between the vectors contained in the two arrays."""
     diff_arr = np.zeros((arr1.shape[0], arr2.shape[0], arr1.shape[1]))
     for i in range(diff_arr.shape[1]):
         diff_arr[:, i, :] = arr1
@@ -38,8 +38,8 @@ def L2(arr1, arr2):
 
 
 def dot(arr1, arr2):
-    """Inner product between two arrays."""
-    return -np.dot(arr1.T, arr2)/3
+    """Inner product between the two arrays adjusted to look like a distance."""
+    return -np.dot(arr1, arr2.T)/3
 
 
 DIST_METRIC = L2
