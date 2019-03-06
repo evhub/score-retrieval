@@ -34,9 +34,6 @@ run-retrieval:
 .PHONY: run-all
 run-all: save-vecs run-retrieval
 
-.PHONY: clean-run
-clean-run: delete-vecs run-all
-
 .PHONY: index-data
 index-data:
 	python ./score_retrieval/data.py

@@ -49,7 +49,11 @@ def random_index(label_list, label, not_ind):
     for i, test_label in enumerate(label_list):
         if test_label == label and i != not_ind:
             correct_indices.append(i)
-    return random.choice(correct_indices) if correct_indices else not_ind
+    if correct_indices:
+        return random.choice(correct_indices)
+    else:
+        print("Only one image with label {} in training dataset.".format(label))
+        return not_ind
 
 def rep_count(repeat, limit):
     """Yield each number repeat times up to length limit."""
