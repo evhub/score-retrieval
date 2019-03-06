@@ -89,9 +89,8 @@ def load_query_veclists(query_paths=query_paths):
         veclist = load_veclist(path)
         if veclist is not None:
             label = get_label(path)
-            for i, vec in enumerate(veclist):
-                q_labels.append(label)
-                q_veclists.append(veclist)
+            q_labels.append(label)
+            q_veclists.append(veclist)
     return q_labels, q_veclists
 
 
