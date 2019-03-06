@@ -127,17 +127,19 @@ def index_data(base_index=None, skip_queryless=True, max_queries_per_label=MAX_Q
     for label, name_index in base_index.items():
 
         names = tuple(name_index.keys())
-        if len(names) < 2:
-            if skip_queryless:
-                continue
-            head_names, tail_names = names, []
-        else:
+        if len(names) >= 2:
             head_names, tail_names = names[:1], names[1:]
 
-        if max_queries_per_label:
-            tail_names, excess_names = tail_names[max_queries_per_label:], tail_names[max_queries_per_label:]
+            if max_queries_per_label:
+                tail_names, excess_names = tail_names[max_queries_per_label:], tail_names[max_queries_per_label:]
+            else:
+                excess_names = []
+
+        elif skip_queryless:
+            head_names, tail_names, excess_names = [], [], names
+
         else:
-            excess_names = []
+            head_names, tail_names, excess_names = names, [], []
 
         append_names(head_names, database_paths, database_labels, label, name_index)
         append_names(tail_names, query_paths, query_labels, label, name_index)
