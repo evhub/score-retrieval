@@ -8,7 +8,6 @@ from scipy.spatial.distance import euclidean
 from scipy.stats import linregress
 from fastdtw import fastdtw
 
-from score_retrieval.constants import VECTOR_LEN
 from score_retrieval.data import (
     query_paths,
     database_paths,
