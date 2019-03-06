@@ -117,7 +117,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
             best_label = label
             best_score = total_score
 
-    print("Guessed label: {} (score: {})".format(best_label, best_score))
+    print("Guessed label: {} (score: {}; dist score: {}; lin score: {})".format(
+        best_label, best_score, sum_vec_scores[best_label]/len(query_veclist), linearity_scores[best_label]))
     return best_label
 
 
