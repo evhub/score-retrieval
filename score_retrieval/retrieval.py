@@ -129,16 +129,14 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
     db_labels, db_vecs, db_inds = load_db_vecs(database_paths)
 
     correct = 0
-    total = 0
     for i, (correct_label, veclist) in enumerate(zip(q_labels, q_veclists)):
-        print("({}/{}) Correct label: {}".format(i+1, len(q_labels), correct_label))
+        print("({}/{}) Correct label: {}".format(i+1, len(q_veclists), correct_label))
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, debug=debug)
         if guessed_label == correct_label:
             correct += 1
-        total += 1
 
-    acc = correct/total
-    print("Got accuracy of {} ({}/{} correct).".format(acc, correct, total))
+    acc = correct/len(q_veclists)
+    print("Got accuracy of {} ({}/{} correct).".format(acc, correct, len(q_veclists)))
     return acc
 
 
