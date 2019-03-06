@@ -97,7 +97,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
                 x_vals = np.arange(0, len(inds))
                 m, b, r, p, se = linregress(x_vals, inds)
                 if debug:
-                    print("m = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+                    print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
             linearity_scores[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
 
@@ -110,14 +110,14 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
         linearity_score = linearity_scores[label]
         total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
         if debug:
-            print("total_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
+            print("\ttotal_score = {} (dist_score = {}, linearity_score = {})".format(total_score, dist_score, linearity_score))
 
         # best score is the smallest total_socre
         if total_score < best_score:
             best_label = label
             best_score = total_score
 
-    print("Guessed label: {} (score: {}; dist score: {}; lin score: {})".format(
+    print("\tGuessed label: {} (score: {}; dist score: {}; lin score: {})".format(
         best_label, best_score, sum_vec_scores[best_label]/len(query_veclist), linearity_scores[best_label]))
     return best_label
 
@@ -130,9 +130,9 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
 
     correct = 0
     total = 0
-    for correct_label, veclist in zip(q_labels, q_veclists):
+    for i, (correct_label, veclist) in enumerate(zip(q_labels, q_veclists)):
+        print("({}/{}) Correct label: {}".format(i+1, len(q_labels), correct_label))
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, debug=debug)
-        print("\tCorrect label was: {}".format(correct_label))
         if guessed_label == correct_label:
             correct += 1
         total += 1
