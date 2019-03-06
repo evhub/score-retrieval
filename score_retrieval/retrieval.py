@@ -58,7 +58,7 @@ def retrieve_vec(query_ind, dist_arr, db_labels, db_inds):
     return min_scores
 
 
-LIN_WEIGHT = 0.25
+LIN_WEIGHT = 0.1
 SLOPE_WEIGHT = 0.25
 
 
@@ -117,7 +117,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
             best_label = label
             best_score = total_score
 
-    print("\tGuessed label: {} (score: {}; dist score: {}; lin score: {})".format(
+    print("\tGuessed label: {}\n\t(score: {:.5f}; dist score: {:.5f}; lin score: {:.5f})".format(
         best_label, best_score, sum_vec_scores[best_label]/len(query_veclist), linearity_scores[best_label]))
     return best_label
 
