@@ -49,7 +49,7 @@ def random_index(label_list, label, not_ind):
     for i, test_label in enumerate(label_list):
         if test_label == label and i != not_ind:
             correct_indices.append(i)
-    return random.choice(correct_indices)
+    return random.choice(correct_indices) if correct_indices else not_ind
 
 def rep_count(repeat, limit):
     """Yield each number repeat times up to length limit."""
@@ -69,7 +69,7 @@ db = {
     "cluster": list(rep_count(CLUSTER_LEN, len(train_images))),
     "qidxs": range(len(train_images)),
     "pidxs": [
-        len(images) + random_index(train_labels, label, i)
+        random_index(train_labels, label, i)
         for i, label in enumerate(train_labels)
     ],
 }
