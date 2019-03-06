@@ -137,12 +137,12 @@ def load_db_vecs(db_paths=database_paths):
 
 if __name__ == "__main__":
     # Bar splitting:
-    # from score_splitter import create_bar_waveforms
-    # save_veclists(create_bar_waveforms, grayscale=True)
+    from score_splitter import create_bar_waveforms
+    save_veclists(create_bar_waveforms, grayscale=True)
 
     # Stave splitting:
-    from score_splitter import create_waveforms
-    save_veclists(create_waveforms, grayscale=True)
+    # from score_splitter import create_waveforms
+    # save_veclists(create_waveforms, grayscale=True)
 
     # Benchmark method:
     # from benchmarks import call_benchmark
