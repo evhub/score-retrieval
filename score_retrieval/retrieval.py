@@ -69,14 +69,14 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
     dist_arr = DIST_METRIC(np.asarray(db_vecs), np.asarray(query_veclist))
     assert dist_arr.shape == (len(db_vecs), len(query_veclist)), "{} != {}".format(dist_arr.shape, (len(db_vecs), len(query_veclist)))
 
-    # sum best distances into dist_scores and
+    # sum best distances into sum_vec_scores and
     #  collect all best indices into all_inds
-    dist_scores = defaultdict(float)
+    sum_vec_scores = defaultdict(float)
     all_inds = defaultdict(list)
     for i in range(len(query_veclist)):
         min_scores = retrieve_vec(i, dist_arr, db_labels, db_inds)
         for label, (vec_score, vec_ind) in min_scores.items():
-            dist_scores[label] += vec_score
+            sum_vec_scores[label] += vec_score
             all_inds[label].append(vec_ind)
 
     # calculate linearity by finding weighted abs(m - 1) - r^2 of the
@@ -103,10 +103,10 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, debug=False):
 
     best_label = None
     best_score = float("inf")
-    for label in dist_scores:
+    for label in sum_vec_scores:
 
         # combine dist and linearity scores into a total score
-        dist_score = dist_scores[label]/len(query_veclist)
+        dist_score = sum_vec_scores[label]/len(query_veclist)
         linearity_score = linearity_scores[label]
         total_score = (1 - LIN_WEIGHT) * dist_score + LIN_WEIGHT * linearity_score
         if debug:
@@ -131,7 +131,7 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
     total = 0
     for correct_label, veclist in zip(q_labels, q_veclists):
         guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, debug=debug)
-        print("Correct label was: {}".format(correct_label))
+        print("\tCorrect label was: {}".format(correct_label))
         if guessed_label == correct_label:
             correct += 1
         total += 1
