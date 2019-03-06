@@ -42,7 +42,6 @@ else:
     train_labels,
 )
 
-
 def random_index(label_list, label, not_ind):
     """Choose random index from labels with the given label."""
     correct_indices = []
