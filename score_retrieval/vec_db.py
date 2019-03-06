@@ -14,10 +14,9 @@ from score_retrieval.data import (
     get_label,
     load_img,
 )
-from score_retrieval.constants import VECTOR_LEN
 
 
-def resample_arr(arr, resample_len=VECTOR_LEN):
+def resample_arr(arr, resample_len):
     """Resample array to constant length."""
     out_arr = ss.resample(np.asarray(arr), resample_len)
     assert out_arr.shape == (resample_len,), "{}.shape == {} != ({},)".format(out_arr, out_arr.shape, resample_len)
@@ -34,7 +33,7 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
-def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normalize=False, dataset=None, debug=False):
+def save_veclists(image_to_veclist_func, grayscale=False, resample_len=None, normalize=False, dataset=None, debug=False):
     """Saves database of vectors using the given vector generation function."""
     for label, path in index_images(dataset):
         print("Generating veclist for image {}...".format(path))
@@ -54,8 +53,8 @@ def save_veclists(image_to_veclist_func, grayscale=False, resample=False, normal
         veclist = []
         for vec in raw_veclist:
             if not isnull(vec):
-                if resample:
-                    vec = resample_arr(vec)
+                if resample_len is not None:
+                    vec = resample_arr(vec, resample_len)
                 if normalize:
                     vec = normalize_arr(vec)
                 veclist.append(vec)
