@@ -24,8 +24,8 @@ END_PAGE = None
 # dataset constants
 DEFAULT_DATASET = "piano_dataset"
 MAX_QUERIES_PER_LABEL = None
-TEST_RATIO = 0.8
-TRAIN_RATIO = 0.2
+TEST_RATIO = 0.9
+TRAIN_RATIO = 0.1
 TRAIN_ON_EXCESS = False
 EXPORT_TEST_AS_TRAIN = False
 
