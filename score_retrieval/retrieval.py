@@ -100,12 +100,12 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
     total_losses = (1 - LIN_WEIGHT) * dist_losses + LIN_WEIGHT * linearity_losses
 
     # find the best label
-    best_label = np.argmin(total_losses)
+    best_label = int(np.argmin(total_losses))
     best_label_str = label_set[best_label]
 
     # print debug info
     print("\tGuessed label: {}\n\t(loss: {:.5f}; dist loss: {:.5f}; lin loss: {:.5f})".format(
-        best_label_str, total_losses[best_label], dist_losses[best_label], linearity_losses[best_label]))
+        best_label_str, float(total_losses[best_label]), float(dist_losses[best_label]), float(linearity_losses[best_label])))
 
     return best_label_str
 
