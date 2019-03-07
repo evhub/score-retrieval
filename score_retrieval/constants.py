@@ -5,6 +5,7 @@ import random
 
 random.seed(0)
 
+# base data constants
 DATA_DIR = "/home/ehubinger/score-retrieval/data"
 if not os.path.exists(DATA_DIR):
     print("Could not find data dir {}, defaulting to local data dir.".format(DATA_DIR))
@@ -29,10 +30,14 @@ TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
 EXPORT_TEST_AS_TRAIN = False
 
+# retrieval constants
+LIN_WEIGHT = 0.05
+SLOPE_WEIGHT = 0.25
+
 # exporting constants
 CLUSTER_LEN = 64
 
-
+# utilities
 def get_dataset_dir(dataset=None):
     """Get the directory for the given dataset."""
     data_dir = DATA_DIR

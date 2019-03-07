@@ -16,6 +16,10 @@ from score_retrieval.vec_db import (
     load_query_veclists,
     load_db_vecs,
 )
+from score_retrieval.constants import (
+    LIN_WEIGHT,
+    SLOPE_WEIGHT,
+)
 
 
 def DTW(arr1, arr2):
@@ -43,8 +47,6 @@ def dot(arr1, arr2):
 
 
 DIST_METRIC = L2
-LIN_WEIGHT = 0.1
-SLOPE_WEIGHT = 0.25
 
 
 def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debug=False):
