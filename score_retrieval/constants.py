@@ -22,9 +22,9 @@ START_PAGE = None
 END_PAGE = None
 
 # dataset constants
-DEFAULT_DATASET = "piano_dataset"
+DEFAULT_DATASET = "mini_dataset"
 MAX_QUERIES_PER_LABEL = None
-TEST_RATIO = 0.95
+TEST_RATIO = 1.0
 TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
 EXPORT_TEST_AS_TRAIN = False
