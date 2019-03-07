@@ -31,7 +31,7 @@ TRAIN_ON_EXCESS = True
 EXPORT_TEST_AS_TRAIN = False
 
 # retrieval constants
-LIN_WEIGHT = 0.05
+LIN_WEIGHT = 0.0
 SLOPE_WEIGHT = 0.25
 
 # exporting constants
