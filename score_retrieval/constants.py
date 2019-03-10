@@ -40,24 +40,28 @@ arguments.add_argument(
     metavar="name",
     type=str,
     default=DEFAULT_DATASET,
+    help="defaults to {}".format(DEFAULT_DATASET)
 )
 arguments.add_argument(
     "--test-ratio",
     metavar="ratio",
     type=float,
     default=TEST_RATIO,
+    help="defaults to {}".format(TEST_RATIO)
 )
 arguments.add_argument(
     "--train-ratio",
     metavar="ratio",
     type=float,
     default=TRAIN_RATIO,
+    help="defaults to {}".format(TRAIN_RATIO)
 )
 arguments.add_argument(
     "--train-on-excess",
     metavar="bool",
     type=bool,
     default=TRAIN_ON_EXCESS,
+    help="defaults to {}".format(TRAIN_ON_EXCESS)
 )
 
 # retrieval constants
