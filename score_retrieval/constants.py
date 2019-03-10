@@ -1,6 +1,7 @@
 import os
 import re
 import random
+import argparse
 
 
 random.seed(0)
@@ -23,12 +24,41 @@ START_PAGE = None
 END_PAGE = None
 
 # dataset constants
-DEFAULT_DATASET = "mini_dataset"
+DEFAULT_DATASET = "piano_dataset"
 MAX_QUERIES_PER_LABEL = None
-TEST_RATIO = 1.0
+TEST_RATIO = 0.95
 TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
 EXPORT_TEST_AS_TRAIN = False
+
+# cli arg processing
+arguments = argparse.ArgumentParser(
+    prog="score-retrieval",
+)
+arguments.add_argument(
+    "--dataset",
+    metavar="name",
+    type=str,
+    default=DEFAULT_DATASET,
+)
+arguments.add_argument(
+    "--test-ratio",
+    metavar="ratio",
+    type=float,
+    default=TEST_RATIO,
+)
+arguments.add_argument(
+    "--train-ratio",
+    metavar="ratio",
+    type=float,
+    default=TRAIN_RATIO,
+)
+arguments.add_argument(
+    "--train-on-excess",
+    metavar="bool",
+    type=bool,
+    default=TRAIN_ON_EXCESS,
+)
 
 # retrieval constants
 LIN_WEIGHT = 0.0

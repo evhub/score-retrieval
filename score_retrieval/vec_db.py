@@ -6,10 +6,9 @@ import cv2
 import numpy as np
 from scipy import signal as ss
 
+from score_retrieval.constants import arguments
 from score_retrieval.data import (
     index_images,
-    database_paths,
-    query_paths,
     gen_label_name_index,
     get_label,
     load_img,
@@ -81,7 +80,7 @@ def load_veclist(image_path):
         return None
 
 
-def load_query_veclists(query_paths=query_paths):
+def load_query_veclists(query_paths):
     """Return q_labels, q_veclists."""
     q_labels = []
     q_veclists = []
@@ -94,7 +93,7 @@ def load_query_veclists(query_paths=query_paths):
     return q_labels, q_veclists
 
 
-def load_db_vecs(db_paths=database_paths):
+def load_db_vecs(database_paths):
     """Return db_labels, db_vecs, db_inds."""
     db_labels = []
     db_vecs = []
@@ -102,7 +101,7 @@ def load_db_vecs(db_paths=database_paths):
 
     # generate db index
     db_index = []
-    for path in db_paths:
+    for path in database_paths:
         db_index.append((get_label(path), path))
 
     # sort images into groups based on their order in their piece
@@ -127,17 +126,20 @@ def load_db_vecs(db_paths=database_paths):
 
 
 if __name__ == "__main__":
+    # Determine dataset:
+    dataset = arguments.parse_args().dataset
+
     # Bar splitting:
     from score_splitter import create_bar_waveforms
-    save_veclists(create_bar_waveforms, grayscale=True)
+    save_veclists(create_bar_waveforms, grayscale=True, dataset=dataset)
 
     # Stave splitting:
     # from score_splitter import create_waveforms
-    # save_veclists(create_waveforms, grayscale=True)
+    # save_veclists(create_waveforms, grayscale=True, dataset=dataset)
 
     # Benchmark method:
     # from benchmarks import call_benchmark
     # def mk_benchmark_vec(image):
     #     resized_image = cv2.resize(image, (1024, 1024))
     #     return call_benchmark(images=[resized_image])
-    # save_veclists(mk_benchmark_vec)
+    # save_veclists(mk_benchmark_vec, dataset=dataset)

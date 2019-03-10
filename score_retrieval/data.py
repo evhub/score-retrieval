@@ -16,6 +16,7 @@ from score_retrieval.constants import (
     TRAIN_RATIO,
     DATA_DIR,
     TRAIN_ON_EXCESS,
+    arguments,
 )
 
 
@@ -198,24 +199,53 @@ def num_names(paths):
     return len(name_set)
 
 
-# generate train and test data
-test_label_name_index, train_label_name_index = get_split_indexes([
-    TEST_RATIO,
-    TRAIN_RATIO,
-])
+# train and test data generators
+def gen_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
+    """Generate all database endpoints."""
+    base_index = index_by_label_and_name(dataset)
 
-train_paths, train_labels = deindex(train_label_name_index)
+    test_label_name_index, train_label_name_index = get_split_indexes([
+        test_ratio,
+        train_ratio,
+    ], base_index)
 
-database_paths, database_labels, query_paths, query_labels = index_data(
-    test_label_name_index,
-    excess_paths=train_paths if TRAIN_ON_EXCESS else None,
-    excess_labels=train_labels if TRAIN_ON_EXCESS else None,
-)
+    train_paths, train_labels = deindex(train_label_name_index)
+
+    database_paths, database_labels, query_paths, query_labels = index_data(
+        test_label_name_index,
+        excess_paths=train_paths if train_on_excess else None,
+        excess_labels=train_labels if train_on_excess else None,
+    )
+
+    return locals()
+
+def gen_data_from_args(parsed_args=None):
+    if parsed_args is None:
+        parsed_args = arguments.parse_args()
+    return gen_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
+
+
+# generate data
+if __name__ == "__main__":
+    _data = gen_data_from_args()
+else:
+    _data = gen_data()
+
+dataset = _data["dataset"]
+base_index = _data["base_index"]
+test_label_name_index = _data["test_label_name_index"]
+train_label_name_index = _data["train_label_name_index"]
+train_paths = _data["train_paths"]
+train_labels = _data["train_labels"]
+database_paths = _data["database_paths"]
+database_labels = _data["database_labels"]
+query_paths = _data["query_paths"]
+query_labels = _data["query_labels"]
 
 
 # display lengths when run directly
 if __name__ == "__main__":
-    print("dataset: {}".format(DEFAULT_DATASET))
+    print("dataset: {}".format(dataset))
     num_db_names = num_names(database_paths)
     print("database: {} images from {} pdfs".format(len(database_paths), num_db_names))
     num_query_names = num_names(query_paths)

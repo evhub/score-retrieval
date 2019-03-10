@@ -11,6 +11,7 @@ from fastdtw import fastdtw
 from score_retrieval.data import (
     query_paths,
     database_paths,
+    gen_data_from_args,
 )
 from score_retrieval.vec_db import (
     load_query_veclists,
@@ -133,4 +134,5 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
 
 
 if __name__ == "__main__":
-    run_retrieval()
+    _data = gen_data_from_args()
+    run_retrieval(query_paths=_data["query_paths"], database_paths=_data["database_paths"])
