@@ -222,6 +222,7 @@ def gen_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train
 def gen_data_from_args(parsed_args=None):
     if parsed_args is None:
         parsed_args = arguments.parse_args()
+    print("parsed_args =", parsed_args)
     return gen_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
 
 
