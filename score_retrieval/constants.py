@@ -20,8 +20,6 @@ SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>\s*Piano\s*\n</td
 # data migration constants
 IMG_EXT = ".png"
 DPI = 50
-START_PAGE = None
-END_PAGE = None
 
 # dataset constants
 DEFAULT_DATASET = "piano_dataset"
@@ -30,6 +28,7 @@ TEST_RATIO = 0.95
 TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
 EXPORT_TEST_AS_TRAIN = False
+START_PAGE = 1
 
 # cli arg processing
 arguments = argparse.ArgumentParser(

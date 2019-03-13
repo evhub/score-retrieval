@@ -7,8 +7,6 @@ from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
     DPI,
-    START_PAGE,
-    END_PAGE,
 )
 
 
@@ -20,14 +18,6 @@ def save_pages(pdf_path, name, save_dir):
         traceback.print_exc()
         print("Failed to save {} -> {}/{}.".format(pdf_path, save_dir, name))
     else:
-
-        if START_PAGE and END_PAGE:
-            pages = pages[START_PAGE:END_PAGE]
-        elif START_PAGE:
-            pages = pages[START_PAGE:]
-        elif END_PAGE:
-            pages = pages[:END_PAGE]
-
         for i, page in enumerate(pages):
             page_path = os.path.join(save_dir, name) + "_" + str(i) + IMG_EXT
             if os.path.exists(page_path):

@@ -16,6 +16,7 @@ from score_retrieval.constants import (
     TRAIN_RATIO,
     DATA_DIR,
     TRAIN_ON_EXCESS,
+    START_PAGE,
     arguments,
 )
 
@@ -40,6 +41,12 @@ def get_label(image_path):
     return os.path.relpath(piece_dir, dataset_dir)
 
 
+def get_name_ind(img_path):
+    """Get the name and index of the given image."""
+    name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
+    return name, int(ind)
+
+
 def index_images(dataset=None):
     """Return an iterator of (label, path) for all images."""
     data_dir = get_dataset_dir(dataset)
@@ -47,6 +54,9 @@ def index_images(dataset=None):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:
                 img_path = os.path.join(dirpath, fname)
+                name, ind = get_name_ind(img_path)
+                if START_PAGE is not None and ind < START_PAGE:
+                    continue
                 yield get_label(img_path), img_path
 
 
@@ -81,18 +91,11 @@ def get_basename_to_path_dict(dataset=None):
     return basename_to_path
 
 
-def get_name_ind(img_path):
-    """Get the name and index of the given image."""
-    name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
-    return name, ind
-
-
 def gen_label_name_index(indexed_images, sort=False):
     """Return dict mapping labels to dict mapping names to image paths."""
     index = defaultdict(lambda: defaultdict(list))
     for label, img_path in indexed_images:
         name, ind = get_name_ind(img_path)
-        ind = int(ind)
         group = index[label][name]
         if sort:
             while len(group) <= ind:
