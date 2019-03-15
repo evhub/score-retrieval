@@ -10,10 +10,14 @@ from score_retrieval.constants import (
     DATA_DIR,
     SEARCH_HTML_FOR,
     HTML_FNAME,
+    SORT_HTML_BY,
 )
 
 if sys.version_info < (3,):
     input = raw_input
+
+
+html_sort_dict = {}
 
 
 def index_pieces(num_pieces):
@@ -26,7 +30,7 @@ def index_pieces(num_pieces):
     for dirpath, _, filenames in complete_walk:
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
-                if SEARCH_HTML_FOR:
+                if SEARCH_HTML_FOR is not None:
                     html_path = os.path.join(dirpath, HTML_FNAME)
                     if not os.path.exists(html_path):
                         num_missing_html += 1
@@ -36,6 +40,12 @@ def index_pieces(num_pieces):
                         if not SEARCH_HTML_FOR.search(html):
                             num_missing_regex += 1
                             break
+                        if SORT_HTML_BY is not None:
+                            match = SORT_HTML_BY.search(html)
+                            if not match:
+                                print("No HTML sort tag in {}.".format(fname))
+                                continue
+                            html_sort_dict[dirpath] = float(match[0])
                 got_pieces += 1
                 yield dirpath
                 break
@@ -49,10 +59,20 @@ def copy_data(dataset_name, num_pieces):
     data_dir = os.path.join(DATA_DIR, dataset_name)
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
+
     print("Copying {} pieces...".format(num_pieces))
-    for dirpath in index_pieces(num_pieces):
+
+    if SORT_HTML_BY is None:
+        index = index_pieces(num_pieces)
+    else:
+        index = list(index_pieces(float("inf")))
+        index.sort(key=lambda dirpath: html_sort_dict[dirpath], reverse=True)
+        index = index[num_pieces:]
+
+    for dirpath in index:
         relpath = os.path.relpath(dirpath, SCRAPE_DIR)
         newpath = os.path.join(data_dir, relpath)
+
         print("Saving: {} -> {}".format(dirpath, newpath))
         try:
             shutil.copytree(dirpath, newpath)
