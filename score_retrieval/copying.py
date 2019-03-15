@@ -72,6 +72,7 @@ def copy_data(dataset_name, num_pieces):
         index = list(index_pieces(float("inf")))
         index.sort(key=lambda dirpath: html_sort_dict[dirpath], reverse=True)
         index = index[num_pieces:]
+        print("Got {} total pieces.".format(len(index)))
 
     for dirpath in index:
         relpath = os.path.relpath(dirpath, SCRAPE_DIR)
