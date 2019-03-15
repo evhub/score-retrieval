@@ -46,7 +46,7 @@ def index_pieces(num_pieces):
                                 print("No HTML sort tag in {}.".format(fname))
                                 continue
                             try:
-                                html_sort_dict[dirpath] = float(match.group(0))
+                                html_sort_dict[dirpath] = float(match.group(1))
                             except (TypeError, ValueError) as err:
                                 print("Bad HTML sort tag in {} ({}).".format(fname, err))
                                 continue
