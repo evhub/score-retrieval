@@ -4,6 +4,7 @@ import traceback
 from pdf2image import convert_from_path
 
 from score_retrieval.constants import (
+    arguments,
     get_dataset_dir,
     IMG_EXT,
     DPI,
@@ -41,4 +42,4 @@ def migrate_pdfs(dataset=None):
 
 
 if __name__ == "__main__":
-    migrate_pdfs()
+    migrate_pdfs(arguments.parse_args().dataset)
