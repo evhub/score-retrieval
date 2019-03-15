@@ -65,7 +65,7 @@ arguments.add_argument(
 )
 
 # retrieval constants
-LIN_WEIGHT = 0.0
+LIN_WEIGHT = 0.05
 SLOPE_WEIGHT = 0.25
 
 # exporting constants
