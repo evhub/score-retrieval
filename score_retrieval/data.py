@@ -235,6 +235,7 @@ def num_names(paths):
 # train and test data generators
 def gen_single_dataset_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
     """Generate all database endpoints from the given dataset."""
+    datasets = (dataset,)
     base_index = index_by_label_and_name(dataset)
 
     test_label_name_index, train_label_name_index = get_split_indexes([
@@ -264,11 +265,11 @@ def gen_multi_dataset_data(
         train_ratio=MULTIDATASET_TRAIN_RATIO,
     ):
     """Generate all database endpoints from separate datasets."""
-    dataset = {
-        "query_dataset": query_dataset,
-        "db_dataset": db_dataset,
-        "train_dataset": train_dataset,
-    }
+    datasets = (
+        query_dataset,
+        db_dataset,
+        train_dataset,
+    )
 
     # generate query data
     query_label_name_index = index_by_label_and_name(query_dataset)
@@ -319,7 +320,8 @@ else:
     else:
         _data = gen_single_dataset_data()
 
-dataset = _data["dataset"]
+datasets = _data["datasets"]
+datasets_str = "_".join(datasets)
 train_paths = _data["train_paths"]
 train_labels = _data["train_labels"]
 database_paths = _data["database_paths"]
@@ -330,7 +332,7 @@ query_labels = _data["query_labels"]
 
 # display lengths when run directly
 if __name__ == "__main__":
-    print("dataset: {}".format(dataset))
+    print("datasets: {}".format(datasets_str))
     num_db_names = num_names(database_paths)
     print("database: {} images from {} pdfs".format(len(database_paths), num_db_names))
     num_query_names = num_names(query_paths)
