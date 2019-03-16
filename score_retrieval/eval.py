@@ -42,13 +42,13 @@ def compute_mrr(query_rankings, db_labels=database_labels):
     mrrs = []
     for pos_ranks in get_pos_ranks(query_rankings, db_labels):
         if len(pos_ranks):
-            mrrs.append(individual_mrr(pos_ranks))
+            mrrs.append(np.mean(individual_mrr(pos_ranks)))
     return np.mean(np.array(mrrs))
 
 
-def individual_mrr(pos_ranks):
+def individual_mrr(pos_rank):
     """Compute a single MRR from the given pos_ranks."""
-    return np.mean(1/(pos_ranks + 1))
+    return 1/(pos_rank + 1)
 
 
 def compute_acc(query_rankings, top_n=1, db_labels=database_labels):

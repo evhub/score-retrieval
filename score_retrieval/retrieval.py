@@ -144,7 +144,9 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
 
         # compute MRR
         pos_rank = sorted_labels.index(correct_label)
-        mrrs.append(individual_mrr([pos_rank]))
+        mrr = individual_mrr(pos_rank)
+        print("\tMRR: {}".format(mrr))
+        mrrs.append(mrr)
 
     for i, correct in enumerate(in_top_n):
         n = i + 1
@@ -152,8 +154,8 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
         print("Got top {} accuracy of {} ({}/{} correct).".format(
             n, acc, correct, len(q_veclists)))
 
-    mmrr = np.mean(np.array(mrrs))
-    print("Got mean MRR of {}.".format(mmrr))
+    ave_mrr = np.mean(np.array(mrrs))
+    print("Got mean MRR of {}.".format(ave_mrr))
 
     return acc
 
