@@ -233,7 +233,7 @@ def num_names(paths):
 
 
 # train and test data generators
-def gen_single_dataset_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
+def gen_single_dataset_data(dataset=DEFAULT_DATASET, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
     """Generate all database endpoints from the given dataset."""
     datasets = (dataset,)
     base_index = index_by_label_and_name(dataset)

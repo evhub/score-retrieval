@@ -86,6 +86,9 @@ ALG = "bar splitting"
 LIN_WEIGHT = 0.0
 SLOPE_WEIGHT = 0.25
 
+# evaluation constants
+TOP_N_ACCURACY = 5
+
 # exporting constants
 CLUSTER_LEN = 64
 

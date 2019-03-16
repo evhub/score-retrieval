@@ -8,6 +8,7 @@ from scipy.spatial.distance import euclidean
 from scipy.stats import linregress
 from fastdtw import fastdtw
 
+from score_retrieval.eval import individual_mrr
 from score_retrieval.data import (
     query_paths,
     database_paths,
@@ -22,6 +23,7 @@ from score_retrieval.constants import (
     LIN_WEIGHT,
     SLOPE_WEIGHT,
     USE_MULTIDATASET,
+    TOP_N_ACCURACY,
 )
 
 
@@ -104,15 +106,16 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
     dist_losses = sum_min_losses/num_qvecs
     total_losses = (1 - LIN_WEIGHT) * dist_losses + LIN_WEIGHT * linearity_losses
 
-    # find the best label
-    best_label = int(np.argmin(total_losses))
+    # order the labels
+    sorted_labels = [int(label) for label in np.argsort(total_losses)]
+    best_label = sorted_labels[0]
     best_label_str = label_set[best_label]
 
     # print debug info
     print("\tGuessed label: {}\n\t(loss: {:.5f}; dist loss: {:.5f}; lin loss: {:.5f})".format(
         best_label_str, float(total_losses[best_label]), float(dist_losses[best_label]), float(linearity_losses[best_label])))
 
-    return best_label_str
+    return sorted_labels
 
 
 def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=False):
@@ -123,15 +126,34 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
     label_set = list(set(db_label_strs))
     db_labels = [label_set.index(label) for label in db_label_strs]
 
-    correct = 0
-    for i, (correct_label, veclist) in enumerate(zip(q_label_strs, q_veclists)):
-        print("({}/{}) Correct label: {}".format(i+1, len(q_veclists), correct_label))
-        guessed_label = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, label_set, debug=debug)
-        if guessed_label == correct_label:
-            correct += 1
+    in_top_n = [0] * TOP_N_ACCURACY
+    mrrs = []
+    for i, (correct_label_str, veclist) in enumerate(zip(q_label_strs, q_veclists)):
+        print("({}/{}) Correct label: {}".format(i+1, len(q_veclists), correct_label_str))
+        correct_label = label_set.index(correct_label_str)
 
-    acc = correct/len(q_veclists)
-    print("Got accuracy of {} ({}/{} correct).".format(acc, correct, len(q_veclists)))
+        # run retrieval
+        sorted_labels = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, label_set, debug=debug)
+
+        # compute top N accuracy
+        for i in range(len(in_top_n)):
+            n = i + 1
+            if correct_label in sorted_labels[:n]:
+                in_top_n[i] += 1
+
+        # compute MRR
+        pos_rank = sorted_labels.index(correct_label)
+        mrrs.append(individual_mrr([pos_rank]))
+
+    for i, correct in enumerate(in_top_n):
+        n = i + 1
+        acc = correct/len(q_veclists)
+        print("Got top {} accuracy of {} ({}/{} correct).".format(
+            n, acc, correct, len(q_veclists)))
+
+    mmrr = np.mean(np.array(mrrs))
+    print("Got mean MRR of {}.".format(mmrr))
+
     return acc
 
 
