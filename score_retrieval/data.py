@@ -232,6 +232,11 @@ def num_names(paths):
     return len(get_names(paths))
 
 
+def get_label_set(db_labels):
+    """Gets a list of unique labels in db_labels."""
+    return list(set(db_labels))
+
+
 # train and test data generators
 def gen_single_dataset_data(dataset=DEFAULT_DATASET, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
     """Generate all database endpoints from the given dataset."""

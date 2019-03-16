@@ -16,7 +16,7 @@ def path_ranking_to_index_ranking(path_ranking, db_paths=database_paths):
     return query_ranking
 
 
-def get_pos_ranks(query_rankings, db_labels=database_labels):
+def get_pos_ranks(query_rankings, db_labels=database_labels, only_top=True):
     """
     query_rankings[i][j] = index in db_labels of the
         (j+1)th ranked database image for the (i+1)th query
@@ -29,6 +29,8 @@ def get_pos_ranks(query_rankings, db_labels=database_labels):
         for rank, database_index in enumerate(query_rankings[query_index]):
             if db_labels[database_index] == query_label:
                 pos_ranks.append(rank)
+                if only_top:
+                    break
         yield np.array(pos_ranks)
 
 

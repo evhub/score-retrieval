@@ -14,6 +14,7 @@ from score_retrieval.data import (
     database_paths,
     gen_data_from_args,
     gen_multi_dataset_data,
+    get_label_set,
 )
 from score_retrieval.vec_db import (
     load_query_veclists,
@@ -123,7 +124,7 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
     q_label_strs, q_veclists = load_query_veclists(query_paths)
     db_label_strs, db_vecs, db_inds = load_db_vecs(database_paths)
 
-    label_set = list(set(db_label_strs))
+    label_set = get_label_set(db_label_strs)
     db_labels = [label_set.index(label) for label in db_label_strs]
 
     in_top_n = [0] * TOP_N_ACCURACY
