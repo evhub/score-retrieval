@@ -12,6 +12,7 @@ from score_retrieval.data import (
     query_paths,
     database_paths,
     gen_data_from_args,
+    gen_multi_dataset_data,
 )
 from score_retrieval.vec_db import (
     load_query_veclists,
@@ -20,6 +21,7 @@ from score_retrieval.vec_db import (
 from score_retrieval.constants import (
     LIN_WEIGHT,
     SLOPE_WEIGHT,
+    USE_MULTIDATASET,
 )
 
 
@@ -134,5 +136,8 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
 
 
 if __name__ == "__main__":
-    _data = gen_data_from_args()
+    if USE_MULTIDATASET:
+        _data = gen_multi_dataset_data()
+    else:
+        _data = gen_data_from_args()
     run_retrieval(query_paths=_data["query_paths"], database_paths=_data["database_paths"])

@@ -5,12 +5,14 @@ import traceback
 import re
 import sys
 
+from score_retrieval.data import get_composer
 from score_retrieval.constants import (
     SCRAPE_DIR,
     DATA_DIR,
     SEARCH_HTML_FOR,
     HTML_FNAME,
     SORT_HTML_BY,
+    ALLOWED_COMPOSERS,
 )
 
 if sys.version_info < (3,):
@@ -23,6 +25,7 @@ html_sort_dict = {}
 def index_pieces(num_pieces):
     """Index all the piece directories in the scrape directory."""
     got_pieces = 0
+    num_wrong_composer = 0
     num_missing_html = 0
     num_missing_regex = 0
     complete_walk = list(os.walk(SCRAPE_DIR))
@@ -30,6 +33,11 @@ def index_pieces(num_pieces):
     for dirpath, _, filenames in complete_walk:
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
+                if ALLOWED_COMPOSERS:
+                    composer = get_composer(fname)
+                    if composer not in ALLOWED_COMPOSERS:
+                        num_wrong_composer += 1
+                        continue
                 if SEARCH_HTML_FOR is not None:
                     html_path = os.path.join(dirpath, HTML_FNAME)
                     if not os.path.exists(html_path):
@@ -55,7 +63,8 @@ def index_pieces(num_pieces):
                 break
         if got_pieces >= num_pieces:
             break
-    print("Indexed {} pieces ({} had no HTML; {} were missing desired regex in their HTML).".format(got_pieces, num_missing_html, num_missing_regex))
+    print("Indexed {} pieces ({} had wrong composer; {} had no HTML; {} were missing desired regex in their HTML).".format(
+        got_pieces, num_wrong_composer, num_missing_html, num_missing_regex))
 
 
 def copy_data(dataset_name, num_pieces):

@@ -17,6 +17,17 @@ from score_retrieval.constants import (
     DATA_DIR,
     TRAIN_ON_EXCESS,
     START_PAGE,
+    ALLOWED_COMPOSERS,
+    IGNORE_IMAGES,
+    USE_MULTIDATASET,
+    QUERY_DATASET,
+    DB_DATASET,
+    AUGMENT_DB_DATASET,
+    TRAIN_DATASET,
+    AUGMENT_DB_TO,
+    MULTIDATASET_QUERY_RATIO,
+    MULTIDATASET_DB_RATIO,
+    MULTIDATASET_TRAIN_RATIO,
     arguments,
 )
 
@@ -31,6 +42,12 @@ def top_dir(path):
             return head
         else:
             path = head
+
+
+def get_composer(image_path):
+    piece_dir = os.path.dirname(image_path)
+    composer_dir = os.path.dirname(piece_dir)
+    return os.path.basename(composer_dir)
 
 
 def get_label(image_path):
@@ -53,7 +70,13 @@ def index_images(dataset=None):
     for dirpath, _, filenames in os.walk(data_dir):
         for fname in filenames:
             if os.path.splitext(fname)[-1] == IMG_EXT:
+                if IGNORE_IMAGES and fname in IGNORE_IMAGES:
+                    continue
                 img_path = os.path.join(dirpath, fname)
+                if ALLOWED_COMPOSERS:
+                    composer = get_composer(img_path)
+                    if composer not in ALLOWED_COMPOSERS:
+                        continue
                 name, ind = get_name_ind(img_path)
                 if START_PAGE is not None and ind < START_PAGE:
                     continue
@@ -181,30 +204,37 @@ def get_split_indexes(split_ratios, base_index=None):
     return split_indexes
 
 
-def deindex(base_index):
+def deindex(base_index, ignore_names=None):
     """Convert a label name index into paths, labels."""
     paths = []
     labels = []
     for label, name_index in base_index.items():
         for name, name_paths in name_index.items():
+            if ignore_names and name in ignore_names:
+                continue
             for img_path in name_paths:
                 paths.append(img_path)
                 labels.append(label)
     return paths, labels
 
 
-def num_names(paths):
-    """Get the number of unique names in paths."""
+def get_names(paths):
+    """Get a set of all the names in paths."""
     name_set = set()
     for img_path in paths:
         name, ind = get_name_ind(img_path)
         name_set.add(name)
-    return len(name_set)
+    return name_set
+
+
+def num_names(paths):
+    """Get the number of unique names in paths."""
+    return len(get_names(paths))
 
 
 # train and test data generators
-def gen_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
-    """Generate all database endpoints."""
+def gen_single_dataset_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train_on_excess=TRAIN_ON_EXCESS):
+    """Generate all database endpoints from the given dataset."""
     base_index = index_by_label_and_name(dataset)
 
     test_label_name_index, train_label_name_index = get_split_indexes([
@@ -222,23 +252,74 @@ def gen_data(dataset=None, test_ratio=TEST_RATIO, train_ratio=TRAIN_RATIO, train
 
     return locals()
 
+
+def gen_multi_dataset_data(
+        query_dataset=QUERY_DATASET,
+        db_dataset=DB_DATASET,
+        train_dataset=TRAIN_DATASET,
+        augment_db_dataset=AUGMENT_DB_DATASET,
+        augment_db_to=AUGMENT_DB_TO,
+        query_ratio=MULTIDATASET_QUERY_RATIO,
+        db_ratio=MULTIDATASET_DB_RATIO,
+        train_ratio=MULTIDATASET_TRAIN_RATIO,
+    ):
+    """Generate all database endpoints from separate datasets."""
+    dataset = {
+        "query_dataset": query_dataset,
+        "db_dataset": db_dataset,
+        "train_dataset": train_dataset,
+    }
+
+    # generate query data
+    query_label_name_index = index_by_label_and_name(query_dataset)
+    if query_ratio is not None:
+        query_label_name_index, = get_split_indexes([query_ratio], query_label_name_index)
+    query_paths, query_labels = deindex(query_label_name_index)
+    query_names = get_names(query_paths)
+
+    # generate db data
+    db_label_name_index = index_by_label_and_name(db_dataset)
+    if db_ratio is not None:
+        db_label_name_index, = get_split_indexes([db_ratio], db_label_name_index)
+    db_paths, db_labels = deindex(db_label_name_index, ignore_names=query_names)
+
+    # augment db data
+    if augment_db_dataset is not None:
+        assert augment_db_to is not None, "must pass augment_db_to when passing augment_db_dataset"
+        for label, path in index_images(augment_db_dataset):
+            if len(db_paths) < augment_db_to:
+                db_paths.append(path)
+                db_labels.append(label)
+
+    # only generate db names when db data is finalized
+    db_names = get_names(db_paths)
+
+    # generate train data
+    train_label_name_index = index_by_label_and_name(train_dataset)
+    if train_ratio is not None:
+        train_label_name_index, = get_split_indexes([train_ratio], train_label_name_index)
+    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names + query_names)
+
+    return locals()
+
+
 def gen_data_from_args(parsed_args=None):
     if parsed_args is None:
         parsed_args = arguments.parse_args()
     print("parsed_args =", parsed_args)
-    return gen_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
+    return gen_single_dataset_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
 
 
 # generate data
-if __name__ == "__main__":
-    _data = gen_data_from_args()
+if USE_MULTIDATASET:
+    _data = gen_multi_dataset_data()
 else:
-    _data = gen_data()
+    if __name__ == "__main__":
+        _data = gen_data_from_args()
+    else:
+        _data = gen_single_dataset_data()
 
 dataset = _data["dataset"]
-base_index = _data["base_index"]
-test_label_name_index = _data["test_label_name_index"]
-train_label_name_index = _data["train_label_name_index"]
 train_paths = _data["train_paths"]
 train_labels = _data["train_labels"]
 database_paths = _data["database_paths"]

@@ -6,7 +6,19 @@ import cv2
 import numpy as np
 from scipy import signal as ss
 
-from score_retrieval.constants import arguments
+from benchmarks import call_benchmark
+from score_splitter import (
+    create_waveforms,
+    create_bar_waveforms,
+)
+
+from score_retrieval.constants import (
+    ALG,
+    USE_MULTIDATASET,
+    DB_DATASET,
+    QUERY_DATASET,
+    arguments,
+)
 from score_retrieval.data import (
     index_images,
     gen_label_name_index,
@@ -125,21 +137,37 @@ def load_db_vecs(database_paths):
     return db_labels, db_vecs, db_indices
 
 
+def make_benchmark_vec(image):
+    resized_image = cv2.resize(image, (1024, 1024))
+    return call_benchmark(images=[resized_image])
+
+
+algs = {
+    "bar splitting": (
+        create_bar_waveforms,
+        dict(grayscale=True),
+    ),
+    "stave splitting": (
+        create_waveforms,
+        dict(grayscale=True),
+    ),
+    "benchmark": (
+        make_benchmark_vec,
+        dict(),
+    ),
+}
+
+
 if __name__ == "__main__":
-    # Determine dataset:
-    dataset = arguments.parse_args().dataset
-
-    # Bar splitting:
-    from score_splitter import create_bar_waveforms
-    save_veclists(create_bar_waveforms, grayscale=True, dataset=dataset)
-
-    # Stave splitting:
-    # from score_splitter import create_waveforms
-    # save_veclists(create_waveforms, grayscale=True, dataset=dataset)
-
-    # Benchmark method:
-    # from benchmarks import call_benchmark
-    # def mk_benchmark_vec(image):
-    #     resized_image = cv2.resize(image, (1024, 1024))
-    #     return call_benchmark(images=[resized_image])
-    # save_veclists(mk_benchmark_vec, dataset=dataset)
+    func, kwargs = algs[ALG]
+    if USE_MULTIDATASET:
+        datasets = [
+            DB_DATASET,
+            QUERY_DATASET,
+        ]
+    else:
+        datasets = [
+            arguments.parse_args().dataset,
+        ]
+    for dataset in datasets:
+        save_veclists(func, dataset=dataset, **kwargs)

@@ -22,14 +22,29 @@ SORT_HTML_BY = re.compile(r"<span class='current-rating' id='current-rating-\d+'
 IMG_EXT = ".png"
 DPI = 50
 
-# dataset constants
+# universal dataset constants
+EXPORT_TEST_AS_TRAIN = False
+START_PAGE = 1
+ALLOWED_COMPOSERS = None
+IGNORE_IMAGES = ()
+
+# single dataset constants
 DEFAULT_DATASET = "piano_dataset"
 MAX_QUERIES_PER_LABEL = None
 TEST_RATIO = 0.95
 TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
-EXPORT_TEST_AS_TRAIN = False
-START_PAGE = 1
+
+# multi dataset constants
+USE_MULTIDATASET = False
+QUERY_DATASET = "query_dataset"
+DB_DATASET = "db_dataset"
+AUGMENT_DB_DATASET = "piano_dataset"
+TRAIN_DATASET = "new_piano_dataset"
+AUGMENT_DB_TO = 6000
+MULTIDATASET_QUERY_RATIO = 1.0
+MULTIDATASET_DB_RATIO = 1.0
+MULTIDATASET_TRAIN_RATIO = 1.0
 
 # cli arg processing
 arguments = argparse.ArgumentParser(
@@ -63,6 +78,9 @@ arguments.add_argument(
     default=TRAIN_ON_EXCESS,
     help="defaults to {}".format(TRAIN_ON_EXCESS)
 )
+
+# vector saving constants
+ALG = "bar splitting"
 
 # retrieval constants
 LIN_WEIGHT = 0.0
