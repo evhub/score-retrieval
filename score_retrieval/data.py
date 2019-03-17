@@ -17,7 +17,8 @@ from score_retrieval.constants import (
     DATA_DIR,
     TRAIN_ON_EXCESS,
     START_PAGE,
-    ALLOWED_COMPOSERS,
+    ALLOW_COMPOSERS,
+    IGNORE_COMPOSERS,
     IGNORE_IMAGES,
     USE_MULTIDATASET,
     QUERY_DATASET,
@@ -73,13 +74,17 @@ def index_images(dataset=None):
                 if IGNORE_IMAGES and fname in IGNORE_IMAGES:
                     continue
                 img_path = os.path.join(dirpath, fname)
-                if ALLOWED_COMPOSERS:
-                    composer = get_composer(img_path)
-                    if composer not in ALLOWED_COMPOSERS:
-                        continue
+
+                composer = get_composer(img_path)
+                if IGNORE_COMPOSERS and composer in IGNORE_COMPOSERS:
+                    continue
+                if ALLOW_COMPOSERS and composer not in ALLOW_COMPOSERS:
+                    continue
+
                 name, ind = get_name_ind(img_path)
                 if START_PAGE is not None and ind < START_PAGE:
                     continue
+
                 yield get_label(img_path), img_path
 
 
@@ -204,15 +209,20 @@ def get_split_indexes(split_ratios, base_index=None):
     return split_indexes
 
 
-def deindex(base_index, ignore_names=None):
+def deindex(base_index, ignore_labels=None, ignore_names=None, ignore_composers=None):
     """Convert a label name index into paths, labels."""
     paths = []
     labels = []
     for label, name_index in base_index.items():
+        if ignore_labels and label in ignore_labels:
+            continue
         for name, name_paths in name_index.items():
             if ignore_names and name in ignore_names:
                 continue
             for img_path in name_paths:
+                composer = get_composer(img_path)
+                if ignore_composers and composer in ignore_composers:
+                    continue
                 paths.append(img_path)
                 labels.append(label)
     return paths, labels

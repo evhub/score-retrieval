@@ -25,8 +25,9 @@ DPI = 50
 # universal dataset constants
 EXPORT_TEST_AS_TRAIN = False
 START_PAGE = 1
-ALLOWED_COMPOSERS = None
-IGNORE_IMAGES = ()
+ALLOW_COMPOSERS = None
+IGNORE_COMPOSERS = None
+IGNORE_IMAGES = None
 
 # single dataset constants
 DEFAULT_DATASET = "piano_dataset"
