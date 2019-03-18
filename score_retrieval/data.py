@@ -17,8 +17,6 @@ from score_retrieval.constants import (
     DATA_DIR,
     TRAIN_ON_EXCESS,
     START_PAGE,
-    ALLOW_COMPOSERS,
-    IGNORE_COMPOSERS,
     IGNORE_IMAGES,
     USE_MULTIDATASET,
     QUERY_DATASET,
@@ -29,6 +27,7 @@ from score_retrieval.constants import (
     MULTIDATASET_QUERY_RATIO,
     MULTIDATASET_DB_RATIO,
     MULTIDATASET_TRAIN_RATIO,
+    ALLOWED_AUGMENT_TRAIN_COMPOSERS,
     arguments,
 )
 
@@ -74,17 +73,9 @@ def index_images(dataset=None):
                 if IGNORE_IMAGES and fname in IGNORE_IMAGES:
                     continue
                 img_path = os.path.join(dirpath, fname)
-
-                composer = get_composer(img_path)
-                if IGNORE_COMPOSERS and composer in IGNORE_COMPOSERS:
-                    continue
-                if ALLOW_COMPOSERS and composer not in ALLOW_COMPOSERS:
-                    continue
-
                 name, ind = get_name_ind(img_path)
                 if START_PAGE is not None and ind < START_PAGE:
                     continue
-
                 yield get_label(img_path), img_path
 
 
@@ -209,7 +200,7 @@ def get_split_indexes(split_ratios, base_index=None):
     return split_indexes
 
 
-def deindex(base_index, ignore_labels=None, ignore_names=None, ignore_composers=None):
+def deindex(base_index, ignore_labels=None, ignore_names=None, ignore_composers=None, allow_composers=None):
     """Convert a label name index into paths, labels."""
     paths = []
     labels = []
@@ -221,6 +212,8 @@ def deindex(base_index, ignore_labels=None, ignore_names=None, ignore_composers=
                 continue
             for img_path in name_paths:
                 composer = get_composer(img_path)
+                if allow_composers and composer not in allow_composers:
+                    continue
                 if ignore_composers and composer in ignore_composers:
                     continue
                 paths.append(img_path)
@@ -278,6 +271,7 @@ def gen_multi_dataset_data(
         query_ratio=MULTIDATASET_QUERY_RATIO,
         db_ratio=MULTIDATASET_DB_RATIO,
         train_ratio=MULTIDATASET_TRAIN_RATIO,
+        allowed_augment_train_composers=ALLOWED_AUGMENT_TRAIN_COMPOSERS,
     ):
     """Generate all database endpoints from separate datasets."""
     datasets = (
@@ -291,30 +285,32 @@ def gen_multi_dataset_data(
     if query_ratio is not None:
         query_label_name_index, = get_split_indexes([query_ratio], query_label_name_index)
     query_paths, query_labels = deindex(query_label_name_index)
-    query_names = get_names(query_paths)
 
     # generate db data
     db_label_name_index = index_by_label_and_name(db_dataset)
     if db_ratio is not None:
         db_label_name_index, = get_split_indexes([db_ratio], db_label_name_index)
-    db_paths, db_labels = deindex(db_label_name_index, ignore_names=query_names)
+    db_paths, db_labels = deindex(db_label_name_index)
 
     # augment db data
     if augment_db_dataset is not None:
         assert augment_db_to is not None, "must pass augment_db_to when passing augment_db_dataset"
-        for label, path in index_images(augment_db_dataset):
-            if len(db_paths) < augment_db_to:
-                db_paths.append(path)
-                db_labels.append(label)
+        augment_db_label_name_index = index_by_label_and_name(augment_db_dataset)
+        augment_db_paths, augment_db_labels = deindex(augment_db_label_name_index, allow_composers=allowed_augment_train_composers)
+        for path, label in zip(augment_db_paths, augment_db_labels):
+            if len(db_paths) >= augment_db_to:
+                break
+            db_paths.append(path)
+            db_labels.append(label)
 
-    # only generate db names when db data is finalized
+    # only get db names when db data is finalized
     db_names = get_names(db_paths)
 
     # generate train data
     train_label_name_index = index_by_label_and_name(train_dataset)
     if train_ratio is not None:
         train_label_name_index, = get_split_indexes([train_ratio], train_label_name_index)
-    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names + query_names)
+    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names, allow_composers=allowed_augment_train_composers)
 
     return locals()
 

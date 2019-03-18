@@ -25,8 +25,6 @@ DPI = 50
 # universal dataset constants
 EXPORT_TEST_AS_TRAIN = False
 START_PAGE = 1
-ALLOW_COMPOSERS = None
-IGNORE_COMPOSERS = None
 IGNORE_IMAGES = None
 
 # single dataset constants
@@ -46,6 +44,35 @@ AUGMENT_DB_TO = 6000
 MULTIDATASET_QUERY_RATIO = 1.0
 MULTIDATASET_DB_RATIO = 1.0
 MULTIDATASET_TRAIN_RATIO = 1.0
+ALLOWED_AUGMENT_TRAIN_COMPOSERS = (
+    "Wagner,_Richard",
+    "Haydn,_Joseph",
+    "Handel,_George_Frideric",
+    "Dvo%C5%99%C3%A1k,_Anton%C3%ADn",
+    "Stravinsky,_Igor",
+    "Verdi,_Giuseppe",
+    "Mahler,_Gustav",
+    "Prokofiev,_Sergey",
+    "Berlioz,_Hector",
+    "Puccini,_Giacomo",
+    "Palestrina,_Giovanni_Pierluigi_da",
+    "Bruckner,_Anton",
+    "Telemann,_Georg_Philipp",
+    "Sibelius,_Jean",
+    "Rossini,_Gioacchino",
+    "Gluck,_Christoph_Willibald",
+    "Hindemith,_Paul",
+    "Monteverdi,_Claudio",
+    "Franco,_Cesare",
+    "Bizet,_Georges",
+    "Rameau,_Jean-Philippe",
+    "Faur%C3%A9,_Gabriel",
+    "Rimsky-Korsakov,_Nikolay",
+    "Donizetti,_Gaetano",
+    "Smetana,_Bed%C5%99ich",
+    "Jan%C3%A1%C4%8Dek,_Leo%C5%A1",
+    "Couperin,_Fran%C3%A7ois",
+)
 
 # cli arg processing
 arguments = argparse.ArgumentParser(
