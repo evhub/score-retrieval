@@ -332,7 +332,7 @@ else:
         _data = gen_single_dataset_data()
 
 datasets = _data["datasets"]
-datasets_str = "_".join(datasets)
+datasets_str = ",".join(datasets)
 train_paths = _data["train_paths"]
 train_labels = _data["train_labels"]
 database_paths = _data["database_paths"]

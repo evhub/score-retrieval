@@ -8,7 +8,9 @@ from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
     DPI,
+    USE_MULTIDATASET,
 )
+from score_retrieval.data import datasets
 
 
 def save_pages(pdf_path, name, save_dir):
@@ -42,4 +44,8 @@ def migrate_pdfs(dataset=None):
 
 
 if __name__ == "__main__":
-    migrate_pdfs(arguments.parse_args().dataset)
+    if USE_MULTIDATASET:
+        for dataset in datasets:
+            migrate_pdfs(dataset)
+    else:
+        migrate_pdfs(arguments.parse_args().dataset)
