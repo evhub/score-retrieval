@@ -44,6 +44,8 @@ def rename(base_dataset=BASE_DATASET, query_dataset=QUERY_DATASET, db_dataset=DB
                 else:
                     raise ValueError("got unknown filename {} (must be {}.pdf or {}.pdf for renaming)".format(fname, query_name, db_name))
                 print("Copying {} -> {}...".format(base_path, new_path))
+                new_dir = os.path.dirname(new_path)
+                os.makedirs(new_dir)
                 shutil.copy(base_path, new_path)
 
 
