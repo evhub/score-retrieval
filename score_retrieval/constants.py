@@ -15,7 +15,7 @@ if not os.path.exists(DATA_DIR):
 # data copying constants
 SCRAPE_DIR = "/data1/dbashir/Project/score_scrape/results/composer"
 HTML_FNAME = "html.txt"
-SEARCH_HTML_FOR = re.compile(r"<th>Instrumentation\n</th>\n<td>\s*Piano\s*\n</td>", flags=re.U)
+SEARCH_HTML_FOR = re.compile("<th>Instrumentation\n</th>\n<td>\s*Piano\s*\n</td>", flags=re.U)
 SORT_HTML_BY = re.compile(r"<span class='current-rating' id='current-rating-\d+' style='width:0%;'>([\d\.]+)/10</span>", flags=re.U)
 
 # data migration constants

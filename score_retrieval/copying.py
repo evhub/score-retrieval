@@ -38,14 +38,14 @@ def index_pieces(num_pieces, allowed_composers=None):
                     if composer not in allowed_composers:
                         num_wrong_composer += 1
                         continue
-                if SEARCH_HTML_FOR is not None:
+                if SEARCH_HTML_FOR is not None or SORT_HTML_BY is not None:
                     html_path = os.path.join(dirpath, HTML_FNAME)
                     if not os.path.exists(html_path):
                         num_missing_html += 1
                         break
                     with open(html_path, "r") as html_file:
                         html = html_file.read()
-                        if not SEARCH_HTML_FOR.search(html):
+                        if SEARCH_HTML_FOR is not None and not SEARCH_HTML_FOR.search(html):
                             num_missing_regex += 1
                             break
                         if SORT_HTML_BY is not None:
@@ -67,7 +67,7 @@ def index_pieces(num_pieces, allowed_composers=None):
         got_pieces, num_wrong_composer, num_missing_html, num_missing_regex))
 
 
-def copy_data(dataset_name, num_pieces, allowed_composers=None):
+def copy_data(dataset_name, num_pieces=float("inf"), allowed_composers=None):
     """Copy num_pieces worth of data to the data directory."""
     data_dir = os.path.join(DATA_DIR, dataset_name)
     if not os.path.exists(data_dir):
@@ -75,7 +75,7 @@ def copy_data(dataset_name, num_pieces, allowed_composers=None):
 
     print("Copying {} pieces...".format(num_pieces))
 
-    if SORT_HTML_BY is None:
+    if SORT_HTML_BY is None or num_pieces == float("inf"):
         index = index_pieces(num_pieces)
     else:
         index = list(index_pieces(float("inf")))
@@ -98,4 +98,6 @@ def copy_data(dataset_name, num_pieces, allowed_composers=None):
 if __name__ == "__main__":
     dataset_name = input("enter name of new dataset: ")
     num_pieces = int(input("enter number of pieces to copy: "))
+    if not num_pieces:
+        num_pieces = float("inf")
     copy_data(dataset_name, num_pieces, ALLOWED_AUGMENT_COMPOSERS)
