@@ -27,7 +27,7 @@ from score_retrieval.constants import (
     MULTIDATASET_QUERY_RATIO,
     MULTIDATASET_DB_RATIO,
     MULTIDATASET_TRAIN_RATIO,
-    ALLOWED_AUGMENT_TRAIN_COMPOSERS,
+    ALLOWED_AUGMENT_COMPOSERS,
     arguments,
 )
 
@@ -271,7 +271,7 @@ def gen_multi_dataset_data(
         query_ratio=MULTIDATASET_QUERY_RATIO,
         db_ratio=MULTIDATASET_DB_RATIO,
         train_ratio=MULTIDATASET_TRAIN_RATIO,
-        allowed_augment_train_composers=ALLOWED_AUGMENT_TRAIN_COMPOSERS,
+        allowed_augment_composers=ALLOWED_AUGMENT_COMPOSERS,
     ):
     """Generate all database endpoints from separate datasets."""
     datasets = (
@@ -296,7 +296,7 @@ def gen_multi_dataset_data(
     if augment_db_dataset is not None:
         assert augment_db_to is not None, "must pass augment_db_to when passing augment_db_dataset"
         augment_db_label_name_index = index_by_label_and_name(augment_db_dataset)
-        augment_database_paths, augment_db_labels = deindex(augment_db_label_name_index, allow_composers=allowed_augment_train_composers)
+        augment_database_paths, augment_db_labels = deindex(augment_db_label_name_index, allow_composers=allowed_augment_composers)
         for path, label in zip(augment_database_paths, augment_db_labels):
             if len(database_paths) >= augment_db_to:
                 break
@@ -310,7 +310,7 @@ def gen_multi_dataset_data(
     train_label_name_index = index_by_label_and_name(train_dataset)
     if train_ratio is not None:
         train_label_name_index, = get_split_indexes([train_ratio], train_label_name_index)
-    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names, allow_composers=allowed_augment_train_composers)
+    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names)
 
     return locals()
 
