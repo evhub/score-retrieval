@@ -1,3 +1,4 @@
+import sys
 import os
 import shutil
 from zlib import crc32
@@ -12,13 +13,19 @@ from score_retrieval.constants import (
 )
 from score_retrieval.data import get_dataset_dir
 
+if sys.version_info < (3,):
+    bytes = str
+
 
 def checksum(data):
     """Compute a checksum of the given data."""
+    if not isinstance(data, bytes):
+        data = data.encode("utf-8")
     return hex(crc32(data) & 0xffffffff)
 
 
 def rename(base_dataset=BASE_DATASET, query_dataset=QUERY_DATASET, db_dataset=DB_DATASET, query_name=QUERY_NAME, db_name=DB_NAME):
+    """Move base_dataset to query_dataset and db_dataset."""
     base_dir = get_dataset_dir(base_dataset)
     query_dir = get_dataset_dir(query_dataset)
     db_dir = get_dataset_dir(db_dataset)
