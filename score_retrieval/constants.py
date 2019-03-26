@@ -22,6 +22,11 @@ SORT_HTML_BY = re.compile(r"<span class='current-rating' id='current-rating-\d+'
 IMG_EXT = ".png"
 DPI = 50
 
+# data renaming constants
+BASE_DATASET = "top50_piano_dataset"
+QUERY_NAME = "query"
+DB_NAME = "db"
+
 # universal dataset constants
 EXPORT_TEST_AS_TRAIN = False
 START_PAGE = 1
@@ -38,12 +43,12 @@ TRAIN_ON_EXCESS = True
 USE_MULTIDATASET = False
 QUERY_DATASET = "query_dataset"
 DB_DATASET = "db_dataset"
-AUGMENT_DB_DATASET = "piano_dataset"
+AUGMENT_DB_DATASET = "new_piano_dataset"
 TRAIN_DATASET = "new_piano_dataset"
 AUGMENT_DB_TO = 6000
 MULTIDATASET_QUERY_RATIO = 1.0
 MULTIDATASET_DB_RATIO = 1.0
-MULTIDATASET_TRAIN_RATIO = 1.0
+MULTIDATASET_TRAIN_RATIO = 0.1
 ALLOWED_AUGMENT_TRAIN_COMPOSERS = (
     "Wagner,_Richard",
     "Haydn,_Joseph",

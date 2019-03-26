@@ -23,6 +23,10 @@ pdfs-to-images:
 copy-data:
 	python ./score_retrieval/copying.py
 
+.PHONY: build-data
+build-data:
+	python ./score_retrieval/renaming.py
+
 .PHONY: save-vecs
 save-vecs:
 	python ./score_retrieval/vec_db.py
