@@ -290,21 +290,21 @@ def gen_multi_dataset_data(
     db_label_name_index = index_by_label_and_name(db_dataset)
     if db_ratio is not None:
         db_label_name_index, = get_split_indexes([db_ratio], db_label_name_index)
-    db_paths, db_labels = deindex(db_label_name_index)
+    database_paths, database_labels = deindex(db_label_name_index)
 
     # augment db data
     if augment_db_dataset is not None:
         assert augment_db_to is not None, "must pass augment_db_to when passing augment_db_dataset"
         augment_db_label_name_index = index_by_label_and_name(augment_db_dataset)
-        augment_db_paths, augment_db_labels = deindex(augment_db_label_name_index, allow_composers=allowed_augment_train_composers)
-        for path, label in zip(augment_db_paths, augment_db_labels):
-            if len(db_paths) >= augment_db_to:
+        augment_database_paths, augment_db_labels = deindex(augment_db_label_name_index, allow_composers=allowed_augment_train_composers)
+        for path, label in zip(augment_database_paths, augment_db_labels):
+            if len(database_paths) >= augment_db_to:
                 break
-            db_paths.append(path)
-            db_labels.append(label)
+            database_paths.append(path)
+            database_labels.append(label)
 
     # only get db names when db data is finalized
-    db_names = get_names(db_paths)
+    db_names = get_names(database_paths)
 
     # generate train data
     train_label_name_index = index_by_label_and_name(train_dataset)
