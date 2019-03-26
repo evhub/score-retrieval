@@ -40,7 +40,7 @@ TRAIN_RATIO = 0.05
 TRAIN_ON_EXCESS = True
 
 # multi dataset constants
-USE_MULTIDATASET = False
+USE_MULTIDATASET = True
 QUERY_DATASET = "query_dataset"
 DB_DATASET = "db_dataset"
 AUGMENT_DB_DATASET = "new_piano_dataset"
