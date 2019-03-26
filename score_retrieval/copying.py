@@ -12,7 +12,7 @@ from score_retrieval.constants import (
     SEARCH_HTML_FOR,
     HTML_FNAME,
     SORT_HTML_BY,
-    ALLOWED_COMPOSERS,
+    ALLOWED_AUGMENT_COMPOSERS,
 )
 
 if sys.version_info < (3,):
@@ -22,7 +22,7 @@ if sys.version_info < (3,):
 html_sort_dict = {}
 
 
-def index_pieces(num_pieces):
+def index_pieces(num_pieces, allowed_composers=None):
     """Index all the piece directories in the scrape directory."""
     got_pieces = 0
     num_wrong_composer = 0
@@ -33,9 +33,9 @@ def index_pieces(num_pieces):
     for dirpath, _, filenames in complete_walk:
         for fname in filenames:
             if os.path.splitext(fname)[-1] == ".pdf":
-                if ALLOWED_COMPOSERS:
+                if allowed_composers:
                     composer = get_composer(fname)
-                    if composer not in ALLOWED_COMPOSERS:
+                    if composer not in allowed_composers:
                         num_wrong_composer += 1
                         continue
                 if SEARCH_HTML_FOR is not None:
@@ -67,7 +67,7 @@ def index_pieces(num_pieces):
         got_pieces, num_wrong_composer, num_missing_html, num_missing_regex))
 
 
-def copy_data(dataset_name, num_pieces):
+def copy_data(dataset_name, num_pieces, allowed_composers=None):
     """Copy num_pieces worth of data to the data directory."""
     data_dir = os.path.join(DATA_DIR, dataset_name)
     if not os.path.exists(data_dir):
@@ -98,4 +98,4 @@ def copy_data(dataset_name, num_pieces):
 if __name__ == "__main__":
     dataset_name = input("enter name of new dataset: ")
     num_pieces = int(input("enter number of pieces to copy: "))
-    copy_data(dataset_name, num_pieces)
+    copy_data(dataset_name, num_pieces, ALLOWED_AUGMENT_COMPOSERS)
