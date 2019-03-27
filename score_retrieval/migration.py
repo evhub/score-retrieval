@@ -8,7 +8,6 @@ from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
     DPI,
-    USE_MULTIDATASET,
 )
 from score_retrieval.data import datasets
 
@@ -44,8 +43,9 @@ def migrate_pdfs(dataset=None):
 
 
 if __name__ == "__main__":
-    if USE_MULTIDATASET:
+    parsed_args = arguments.parse_args()
+    if parsed_args.multidataset:
         for dataset in datasets:
             migrate_pdfs(dataset)
     else:
-        migrate_pdfs(arguments.parse_args().dataset)
+        migrate_pdfs(parsed_args.dataset)

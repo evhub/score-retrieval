@@ -21,9 +21,9 @@ from score_retrieval.vec_db import (
     load_db_vecs,
 )
 from score_retrieval.constants import (
+    arguments,
     LIN_WEIGHT,
     SLOPE_WEIGHT,
-    USE_MULTIDATASET,
     TOP_N_ACCURACY,
 )
 
@@ -161,8 +161,5 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
 
 
 if __name__ == "__main__":
-    if USE_MULTIDATASET:
-        _data = gen_multi_dataset_data()
-    else:
-        _data = gen_data_from_args()
+    _data = gen_data_from_args()
     run_retrieval(query_paths=_data["query_paths"], database_paths=_data["database_paths"])

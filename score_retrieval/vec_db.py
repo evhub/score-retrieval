@@ -14,7 +14,6 @@ from score_splitter import (
 
 from score_retrieval.constants import (
     ALG,
-    USE_MULTIDATASET,
     DB_DATASET,
     QUERY_DATASET,
     arguments,
@@ -160,14 +159,15 @@ algs = {
 
 if __name__ == "__main__":
     func, kwargs = algs[ALG]
-    if USE_MULTIDATASET:
+    parsed_args = arguments.parse_args()
+    if parsed_args.multidataset:
         datasets = [
             DB_DATASET,
             QUERY_DATASET,
         ]
     else:
         datasets = [
-            arguments.parse_args().dataset,
+            parsed_args.dataset,
         ]
     for dataset in datasets:
         save_veclists(func, dataset=dataset, **kwargs)

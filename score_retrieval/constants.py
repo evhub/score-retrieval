@@ -85,6 +85,13 @@ arguments = argparse.ArgumentParser(
     prog="score-retrieval",
 )
 arguments.add_argument(
+    "--multidataset",
+    metavar="bool",
+    type=lambda arg: arg.lower().startswith("y") or arg.lower().startswith("t"),
+    default=USE_MULTIDATASET,
+    help="defaults to {}".format(USE_MULTIDATASET)
+)
+arguments.add_argument(
     "--dataset",
     metavar="name",
     type=str,
@@ -135,3 +142,7 @@ def get_dataset_dir(dataset=None):
     if dataset:
         data_dir = os.path.join(data_dir, dataset)
     return data_dir
+
+# arg checking
+if __name__ == "__main__":
+    print(arguments.parse_args())

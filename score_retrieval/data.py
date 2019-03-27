@@ -321,17 +321,19 @@ def gen_data_from_args(parsed_args=None):
     if parsed_args is None:
         parsed_args = arguments.parse_args()
     print("parsed_args =", parsed_args)
-    return gen_single_dataset_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
+    if parsed_args.multidataset:
+        return gen_multi_dataset_data()
+    else:
+        return gen_single_dataset_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
 
 
 # generate data
-if USE_MULTIDATASET:
+if __name__ == "__main__":
+    _data = gen_data_from_args()
+elif USE_MULTIDATASET:
     _data = gen_multi_dataset_data()
 else:
-    if __name__ == "__main__":
-        _data = gen_data_from_args()
-    else:
-        _data = gen_single_dataset_data()
+    _data = gen_single_dataset_data()
 
 datasets = _data["datasets"]
 datasets_str = ",".join(datasets)
