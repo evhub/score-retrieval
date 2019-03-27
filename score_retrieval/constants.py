@@ -29,7 +29,7 @@ DB_NAME = "db"
 
 # universal dataset constants
 EXPORT_TEST_AS_TRAIN = False
-START_PAGE = 1
+START_PAGE = 0
 IGNORE_IMAGES = None
 
 # single dataset constants
