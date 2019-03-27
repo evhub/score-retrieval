@@ -281,6 +281,8 @@ def gen_multi_dataset_data(
         db_dataset,
         train_dataset,
     )
+    if augment_db_dataset is not None:
+        datasets += (augment_db_dataset,)
 
     # generate query data
     query_label_name_index = index_by_label_and_name(query_dataset)
