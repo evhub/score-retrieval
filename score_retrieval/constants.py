@@ -43,7 +43,7 @@ TRAIN_ON_EXCESS = True
 USE_MULTIDATASET = True
 QUERY_DATASET = "query_dataset"
 DB_DATASET = "db_dataset"
-AUGMENT_DB_DATASET = "new_piano_dataset"
+AUGMENT_DB_DATASET = "augment_dataset"
 TRAIN_DATASET = "new_piano_dataset"
 AUGMENT_DB_TO = 6000
 MULTIDATASET_QUERY_RATIO = 1.0
@@ -78,6 +78,7 @@ ALLOWED_AUGMENT_COMPOSERS = (
     "Jan%C3%A1%C4%8Dek,_Leo%C5%A1",
     "Couperin,_Fran%C3%A7ois",
 )
+DISALLOWED_TRAIN_COMPOSERS = ()
 
 # cli arg processing
 arguments = argparse.ArgumentParser(

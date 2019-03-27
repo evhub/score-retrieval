@@ -28,6 +28,7 @@ from score_retrieval.constants import (
     MULTIDATASET_DB_RATIO,
     MULTIDATASET_TRAIN_RATIO,
     ALLOWED_AUGMENT_COMPOSERS,
+    DISALLOWED_TRAIN_COMPOSERS,
     arguments,
 )
 
@@ -272,6 +273,7 @@ def gen_multi_dataset_data(
         db_ratio=MULTIDATASET_DB_RATIO,
         train_ratio=MULTIDATASET_TRAIN_RATIO,
         allowed_augment_composers=ALLOWED_AUGMENT_COMPOSERS,
+        disallowed_train_composers=DISALLOWED_TRAIN_COMPOSERS,
     ):
     """Generate all database endpoints from separate datasets."""
     datasets = (
@@ -310,7 +312,7 @@ def gen_multi_dataset_data(
     train_label_name_index = index_by_label_and_name(train_dataset)
     if train_ratio is not None:
         train_label_name_index, = get_split_indexes([train_ratio], train_label_name_index)
-    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names)
+    train_paths, train_labels = deindex(train_label_name_index, ignore_names=db_names, ignore_composers=disallowed_train_composers)
 
     return locals()
 
