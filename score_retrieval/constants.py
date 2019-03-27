@@ -78,7 +78,32 @@ ALLOWED_AUGMENT_COMPOSERS = (
     "Jan%C3%A1%C4%8Dek,_Leo%C5%A1",
     "Couperin,_Fran%C3%A7ois",
 )
-DISALLOWED_TRAIN_COMPOSERS = ()
+DISALLOWED_TRAIN_COMPOSERS = (
+    "Chopin,_Fr%C3%A9d%C3%A9ric",
+    "Liszt,_Franz",
+    "Beethoven,_Ludwig_van",
+    "Mozart,_Wolfgang_Amadeus",
+    "Rachmaninoff,_Sergei",
+    "Bach,_Johann_Sebastian",
+    "Mendelssohn,_Felix",
+    "Bordon,_Pieter",
+    "Mussorgsky,_Modest",
+    "Grieg,_Edvard",
+    "Clementi,_Muzio",
+    "Alb%C3%A9niz,_Isaac",
+    "Strauss,_Richard",
+    "Vivaldi,_Antonio",
+    "Ravel,_Maurice",
+    "Scriabin,_Aleksandr",
+    "Alkan,_Charles-Valentin",
+    "Satie,_Erik",
+    "Sch%C3%B6fmann,_Karl",
+    "Tchaikovsky,_Pyotr",
+    "Brahms,_Johannes",
+    "Schubert,_Franz",
+    "Debussy,_Claude",
+    "Saint-Sa%C3%ABns,_Camille",
+)
 
 # cli arg processing
 arguments = argparse.ArgumentParser(
