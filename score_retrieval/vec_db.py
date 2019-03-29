@@ -14,8 +14,6 @@ from score_splitter import (
 
 from score_retrieval.constants import (
     ALG,
-    DB_DATASET,
-    QUERY_DATASET,
     arguments,
 )
 from score_retrieval.data import (
@@ -23,6 +21,7 @@ from score_retrieval.data import (
     gen_label_name_index,
     get_label,
     load_img,
+    datasets,
 )
 
 
@@ -161,13 +160,7 @@ if __name__ == "__main__":
     func, kwargs = algs[ALG]
     parsed_args = arguments.parse_args()
     if parsed_args.multidataset:
-        datasets = [
-            DB_DATASET,
-            QUERY_DATASET,
-        ]
+        for dataset in datasets:
+            save_veclists(func, dataset=dataset, **kwargs)
     else:
-        datasets = [
-            parsed_args.dataset,
-        ]
-    for dataset in datasets:
-        save_veclists(func, dataset=dataset, **kwargs)
+        save_veclists(func, dataset=parsed_args.dataset, **kwargs)
