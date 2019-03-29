@@ -7,18 +7,20 @@ from score_retrieval.data import (
 )
 
 
-def path_ranking_to_index_ranking(path_ranking, db_paths=database_paths):
-    """Convert ranking of paths into ranking of indices."""
-    query_ranking = []
-    for database_path in path_ranking:
-        database_index = db_paths.index(database_path)
-        query_ranking.append(database_index)
-    return query_ranking
+def get_db_labels(indices_by_label):
+    """Turn indices by label into db_labels."""
+    db_labels = []
+    for label, indices in enumerate(indices_by_label):
+        for ind in indices:
+            if len(db_labels) - 1 < ind:
+                db_labels += [None] * (ind - len(db_labels) + 1)
+            db_labels[ind] = label
+    return db_labels
 
 
-def get_pos_ranks(query_rankings, db_labels=database_labels):
+def get_all_pos_ranks(query_rankings, db_labels=database_labels):
     """
-    query_rankings[i][j] = index in db_labels of the
+    query_rankings[i, j] = index in db_labels of the
         (j+1)th ranked database image for the (i+1)th query
 
     returns: generator of lists of rankings starting
@@ -27,7 +29,7 @@ def get_pos_ranks(query_rankings, db_labels=database_labels):
     for query_index, query_label in enumerate(query_labels):
         # first rank all the labels
         ranked_labels = []
-        for database_index in enumerate(query_rankings[query_index]):
+        for database_index in query_rankings[query_index]:
             label = db_labels[database_index]
             if label not in ranked_labels:
                 ranked_labels.append(label)
@@ -37,10 +39,10 @@ def get_pos_ranks(query_rankings, db_labels=database_labels):
         yield np.array([pos_rank])
 
 
-def compute_mrr(query_rankings, db_labels=database_labels):
-    """Compute MRR for query_rankings as specified in get_pos_ranks."""
+def calculate_mrr(all_pos_ranks):
+    """Compute average MRR for the given pos_ranks."""
     mrrs = []
-    for pos_ranks in get_pos_ranks(query_rankings, db_labels):
+    for pos_ranks in all_pos_ranks:
         if len(pos_ranks):
             mrrs.append(np.mean(individual_mrr(pos_ranks)))
     return np.mean(np.array(mrrs))
@@ -51,15 +53,16 @@ def individual_mrr(pos_rank):
     return 1/(pos_rank + 1)
 
 
-def compute_acc(query_rankings, top_n=1, db_labels=database_labels):
-    """Compute accuracy for query_rankings as specified in get_pos_ranks."""
+def calculate_acc(all_pos_ranks, top_n=1):
+    """Compute top-n accuracy for the given pos_ranks."""
     total = 0.0
     correct = 0.0
-    for pos_ranks in get_pos_ranks(query_rankings, db_labels):
+    for pos_ranks in all_pos_ranks:
         if len(pos_ranks):
             total += 1
             for i in range(top_n):
                 if i in pos_ranks:
                     correct += 1
                     break
-    return correct / total
+    acc = correct / total
+    return acc, correct, total
