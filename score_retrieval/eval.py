@@ -15,6 +15,8 @@ def get_db_labels(indices_by_label):
             if len(db_labels) - 1 < ind:
                 db_labels += [None] * (ind - len(db_labels) + 1)
             db_labels[ind] = label
+    if db_labels != database_labels:
+        print("Detected non-scores database labels (len(got_labels) = {}, len(database_labels) = {})".format(len(db_labels), len(database_labels)))
     return db_labels
 
 
