@@ -19,10 +19,10 @@ def get_labels(indices_by_label):
     return labels
 
 
-def get_all_pos_ranks(query_rankings, q_labels=None, db_labels=None):
+def get_all_pos_ranks(db_rankings, q_labels=None, db_labels=None):
     """
-    query_rankings[i, j] = index in db_labels of the
-        (j+1)th ranked database image for the (i+1)th query
+    db_rankings[i, j] = index in db_labels of the
+        (i+1)th ranked database image for the (j+1)th query
 
     returns: generator of lists of rankings starting
         from 0 of positive labels for each query
@@ -31,6 +31,7 @@ def get_all_pos_ranks(query_rankings, q_labels=None, db_labels=None):
         db_labels = [label_set.index(label) for label in database_labels]
     if q_labels is None:
         q_labels = [label_set.index(label) for label in query_labels]
+    query_rankings = db_rankings.T
     for query_index, query_label in enumerate(q_labels):
         # first rank all the labels
         ranked_labels = []
@@ -40,7 +41,6 @@ def get_all_pos_ranks(query_rankings, q_labels=None, db_labels=None):
                 ranked_labels.append(label)
 
         # then yield an array of just the rank of the correct label
-        print(query_label, ranked_labels)
         pos_rank = ranked_labels.index(query_label)
         yield np.array([pos_rank])
 
