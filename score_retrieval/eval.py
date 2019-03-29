@@ -15,12 +15,10 @@ def get_db_labels(indices_by_label):
             if len(db_labels) - 1 < ind:
                 db_labels += [None] * (ind - len(db_labels) + 1)
             db_labels[ind] = label
-    if db_labels != database_labels:
-        print("Detected non-scores database labels (len(got_labels) = {}, len(database_labels) = {})".format(len(db_labels), len(database_labels)))
     return db_labels
 
 
-def get_all_pos_ranks(query_rankings, db_labels=database_labels):
+def get_all_pos_ranks(query_rankings, db_labels=None):
     """
     query_rankings[i, j] = index in db_labels of the
         (j+1)th ranked database image for the (i+1)th query
@@ -28,6 +26,8 @@ def get_all_pos_ranks(query_rankings, db_labels=database_labels):
     returns: generator of lists of rankings starting
         from 0 of positive labels for each query
     """
+    if db_labels is None:
+        db_labels = database_labels
     for query_index, query_label in enumerate(query_labels):
         # first rank all the labels
         ranked_labels = []
