@@ -8,11 +8,12 @@ from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
     DPI,
+    FORCE_MIGRATE,
 )
 from score_retrieval.data import datasets
 
 
-def save_pages(pdf_path, name, save_dir):
+def save_pages(pdf_path, name, save_dir, force=FORCE_MIGRATE):
     """Save all page of given pdf as image."""
     try:
         pages = convert_from_path(pdf_path, DPI)
@@ -22,15 +23,15 @@ def save_pages(pdf_path, name, save_dir):
     else:
         for i, page in enumerate(pages):
             page_path = os.path.join(save_dir, name) + "_" + str(i) + IMG_EXT
-            if os.path.exists(page_path):
-                print("Skipping {}...".format(page_path))
-            else:
+            if force or not os.path.exists(page_path):
                 print("Saving {}...".format(page_path))
                 page.save(page_path, os.path.splitext(page_path)[-1].lstrip("."))
                 print("Saved {}.".format(page_path))
+            else:
+                print("Skipping {}...".format(page_path))
 
 
-def migrate_pdfs(dataset=None):
+def migrate_pdfs(dataset=None, force=FORCE_MIGRATE):
     """Migrate all pdfs to images."""
     data_dir = get_dataset_dir(dataset)
     print("Migrating {}...".format(data_dir))
@@ -39,7 +40,7 @@ def migrate_pdfs(dataset=None):
             name, ext = os.path.splitext(pdf_file)
             if ext == ".pdf":
                 pdf_path = os.path.join(dirpath, pdf_file)
-                save_pages(pdf_path, name, dirpath)
+                save_pages(pdf_path, name, dirpath, force)
 
 
 if __name__ == "__main__":

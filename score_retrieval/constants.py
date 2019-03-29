@@ -21,6 +21,7 @@ SORT_HTML_BY = re.compile(r"<span class='current-rating' id='current-rating-\d+'
 # data migration constants
 IMG_EXT = ".png"
 DPI = 100
+FORCE_MIGRATE = True
 
 # data renaming constants
 BASE_DATASET = "top50_piano_dataset"
