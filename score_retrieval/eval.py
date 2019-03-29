@@ -4,6 +4,7 @@ from score_retrieval.data import (
     query_labels,
     database_labels,
     database_paths,
+    get_label_set,
 )
 
 
@@ -27,7 +28,8 @@ def get_all_pos_ranks(query_rankings, db_labels=None):
         from 0 of positive labels for each query
     """
     if db_labels is None:
-        db_labels = database_labels
+        label_set = get_label_set(database_labels)
+        db_labels = [label_set.index(label) for label in database_labels]
     for query_index, query_label in enumerate(query_labels):
         # first rank all the labels
         ranked_labels = []
