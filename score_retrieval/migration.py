@@ -8,12 +8,11 @@ from score_retrieval.constants import (
     get_dataset_dir,
     IMG_EXT,
     DPI,
-    FORCE_MIGRATE,
 )
 from score_retrieval.data import datasets
 
 
-def save_pages(pdf_path, name, save_dir, force=FORCE_MIGRATE):
+def save_pages(pdf_path, name, save_dir, force=False):
     """Save all page of given pdf as image."""
     try:
         pages = convert_from_path(pdf_path, DPI)
@@ -31,7 +30,7 @@ def save_pages(pdf_path, name, save_dir, force=FORCE_MIGRATE):
                 print("Skipping {}...".format(page_path))
 
 
-def migrate_pdfs(dataset=None, force=FORCE_MIGRATE):
+def migrate_pdfs(dataset=None, force=False):
     """Migrate all pdfs to images."""
     data_dir = get_dataset_dir(dataset)
     print("Migrating {}...".format(data_dir))
