@@ -4,22 +4,22 @@ from score_retrieval.data import (
     query_labels,
     database_labels,
     database_paths,
-    get_label_set,
+    label_set,
 )
 
 
-def get_db_labels(indices_by_label):
-    """Turn indices by label into db_labels."""
-    db_labels = []
+def get_labels(indices_by_label):
+    """Turn indices by label into labels."""
+    labels = []
     for label, indices in enumerate(indices_by_label):
         for ind in indices:
-            if len(db_labels) - 1 < ind:
-                db_labels += [None] * (ind - len(db_labels) + 1)
-            db_labels[ind] = label
-    return db_labels
+            if len(labels) - 1 < ind:
+                labels += [None] * (ind - len(labels) + 1)
+            labels[ind] = label
+    return labels
 
 
-def get_all_pos_ranks(query_rankings, db_labels=None):
+def get_all_pos_ranks(query_rankings, q_labels=None, db_labels=None):
     """
     query_rankings[i, j] = index in db_labels of the
         (j+1)th ranked database image for the (i+1)th query
@@ -28,9 +28,10 @@ def get_all_pos_ranks(query_rankings, db_labels=None):
         from 0 of positive labels for each query
     """
     if db_labels is None:
-        label_set = get_label_set(database_labels)
         db_labels = [label_set.index(label) for label in database_labels]
-    for query_index, query_label in enumerate(query_labels):
+    if q_labels is None:
+        q_labels = [label_set.index(label) for label in query_labels]
+    for query_index, query_label in enumerate(q_labels):
         # first rank all the labels
         ranked_labels = []
         for database_index in query_rankings[query_index]:

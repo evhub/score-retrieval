@@ -346,6 +346,8 @@ database_labels = _data["database_labels"]
 query_paths = _data["query_paths"]
 query_labels = _data["query_labels"]
 
+label_set = get_label_set(database_labels)
+
 
 # display lengths when run directly
 if __name__ == "__main__":
