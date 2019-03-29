@@ -40,6 +40,7 @@ def get_all_pos_ranks(query_rankings, q_labels=None, db_labels=None):
                 ranked_labels.append(label)
 
         # then yield an array of just the rank of the correct label
+        print(query_label, ranked_labels)
         pos_rank = ranked_labels.index(query_label)
         yield np.array([pos_rank])
 
