@@ -21,7 +21,8 @@ from score_retrieval.data import (
     gen_label_name_index,
     get_label,
     load_img,
-    datasets,
+    database_paths,
+    query_paths,
 )
 
 
@@ -42,9 +43,9 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
-def save_veclists(image_to_veclist_func, grayscale=False, resample_len=None, normalize=False, dataset=None, debug=False):
+def save_veclists(image_paths, image_to_veclist_func, grayscale=False, resample_len=None, normalize=False, debug=False):
     """Saves database of vectors using the given vector generation function."""
-    for label, path in index_images(dataset):
+    for path in image_paths:
         print("Generating veclist for image {}...".format(path))
 
         image = load_img(path, grayscale=grayscale)
@@ -160,7 +161,7 @@ if __name__ == "__main__":
     func, kwargs = algs[ALG]
     parsed_args = arguments.parse_args()
     if parsed_args.multidataset:
-        for dataset in datasets:
-            save_veclists(func, dataset=dataset, **kwargs)
+        paths = database_paths + query_paths
     else:
-        save_veclists(func, dataset=parsed_args.dataset, **kwargs)
+        paths = (path for path, label in index_images(parsed_args.dataset))
+    save_veclists(paths, func, **kwargs)
