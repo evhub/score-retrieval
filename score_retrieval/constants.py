@@ -150,7 +150,7 @@ ALG = "bar splitting"
 
 # retrieval constants
 LIN_WEIGHT = 0.05
-SLOPE_WEIGHT = 0.25
+SLOPE_WEIGHT = 0.0
 
 # evaluation constants
 TOP_N_ACCURACY = 5
