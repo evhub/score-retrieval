@@ -23,7 +23,7 @@ from score_retrieval.vec_db import (
 from score_retrieval.constants import (
     arguments,
     LIN_WEIGHT,
-    SLOPE_WEIGHT,
+    LIN_TYPE_WEIGHTS,
     TOP_N_ACCURACY,
 )
 
@@ -101,7 +101,17 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
                 if debug:
                     print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
-            linearity_losses[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * (1 + r)/2
+            lin_loss = 0
+            for lin_type, weight in LIN_TYPE_WEIGHTS.items():
+                if lin_type == "slope":
+                    lin_loss += weight * np.abs(m - 1)
+                elif lin_type == "r**2":
+                    lin_loss -= weight * r**2
+                elif lin_type == "r":
+                    lin_loss -= weight * (1 + r)/2
+                else:
+                    raise ValueError("unknown linearity loss type {}".format(lin_type))
+            linearity_losses[label] += lin_loss
 
     # calculate total losses
     dist_losses = sum_min_losses/num_qvecs
