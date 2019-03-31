@@ -101,7 +101,7 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
                 if debug:
                     print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
-            linearity_losses[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * r**2
+            linearity_losses[label] += SLOPE_WEIGHT * np.abs(m - 1) - (1 - SLOPE_WEIGHT) * (1 + r)/2
 
     # calculate total losses
     dist_losses = sum_min_losses/num_qvecs
