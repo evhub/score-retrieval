@@ -149,11 +149,11 @@ arguments.add_argument(
 ALG = "bar splitting"
 
 # retrieval constants
-LIN_WEIGHT = 0.1
+LIN_WEIGHT = 0.0
 LIN_TYPE_WEIGHTS = {
-    "slope": 0.0,
-    "r**2": 0.0,
-    "r": 1.0,
+    "slope": 0.1,
+    "r**2": 0.6,
+    "r": 0.3,
 }
 
 # evaluation constants
