@@ -89,21 +89,26 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
     if LIN_WEIGHT > 0:
         for label, inds in enumerate(min_inds):
 
-            # assume perfect linearity for veclists of length 1
-            if len(inds) == 1:
-                m = 1
-                r = 1
+            # don't do linearity if we're only doing diff
+            if LIN_TYPE_WEIGHTS["diff"] < 1.0:
 
-            # otherwise do linear regression to determine linearity
-            else:
-                x_vals = np.arange(0, len(inds))
-                m, b, r, p, se = linregress(x_vals, inds)
-                if debug:
-                    print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
+                # assume perfect linearity for veclists of length 1
+                if len(inds) == 1:
+                    m = 1
+                    r = 1
+
+                # otherwise do linear regression to determine linearity
+                else:
+                    x_vals = np.arange(0, len(inds))
+                    m, b, r, p, se = linregress(x_vals, inds)
+                    if debug:
+                        print("\tm = {}, b = {}, r = {}, p = {}, se = {}".format(m, b, r, p, se))
 
             lin_loss = 0
             for lin_type, weight in LIN_TYPE_WEIGHTS.items():
-                if lin_type == "slope":
+                if not weight:
+                    continue
+                elif lin_type == "slope":
                     lin_loss += weight * np.abs(m - 1)
                 elif lin_type == "r**2":
                     lin_loss -= weight * r**2
