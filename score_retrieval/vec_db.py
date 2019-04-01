@@ -16,6 +16,7 @@ from score_splitter import (
 from score_retrieval.constants import (
     ALG,
     arguments,
+    NONE_ALG,
 )
 from score_retrieval.data import (
     index_images,
@@ -46,6 +47,8 @@ def isnull(arr):
 
 def get_veclist_path(img_path, alg=ALG):
     """Get the veclist path for the given image path and alg."""
+    if alg == NONE_ALG:
+        alg = None
     base_path = os.path.splitext(img_path)[0]
     if alg is None:
         return "{}.npy".format(base_path)
