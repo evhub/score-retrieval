@@ -7,6 +7,7 @@ import numpy as np
 from scipy import signal as ss
 
 from benchmarks import call_benchmark
+from tsai_bars import extractMeasures
 from score_splitter import (
     create_waveforms,
     create_bar_waveforms,
@@ -153,6 +154,10 @@ algs = {
     "benchmark": (
         make_benchmark_vec,
         dict(),
+    ),
+    "new bar splitting": (
+        extractMeasures,
+        dict(grayscale=True),
     ),
 }
 
