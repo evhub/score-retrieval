@@ -44,6 +44,15 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
+def get_veclist_path(img_path, alg=ALG):
+    """Get the veclist path for the given image path and alg."""
+    base_path = os.path.splitext(img_path)[0]
+    if alg is None:
+        return "{}.npy".format(base_path)
+    else:
+        return "{}_{}.npy".format(base_path, alg)
+
+
 def save_veclists(image_paths, image_to_veclist_func, grayscale=False, resample_len=None, normalize=False, debug=False):
     """Saves database of vectors using the given vector generation function."""
     for path in image_paths:
@@ -77,13 +86,13 @@ def save_veclists(image_paths, image_to_veclist_func, grayscale=False, resample_
         if debug:
             print("veclist.shape =", veclist.shape)
 
-        veclist_path = os.path.splitext(path)[0] + ".npy"
+        veclist_path = get_veclist_path(path)
         np.save(veclist_path, veclist)
 
 
 def load_veclist(image_path):
     """Return veclist or None for the given image path."""
-    veclist_path = os.path.splitext(image_path)[0] + ".npy"
+    veclist_path = get_veclist_path(image_path)
     if os.path.exists(veclist_path):
         print("Loading {}...".format(veclist_path))
         return np.load(veclist_path)
@@ -143,11 +152,11 @@ def make_benchmark_vec(image):
 
 
 algs = {
-    "bar splitting": (
+    "bar_splitting": (
         create_bar_waveforms,
         dict(grayscale=True),
     ),
-    "stave splitting": (
+    "stave_splitting": (
         create_waveforms,
         dict(grayscale=True),
     ),
@@ -155,7 +164,7 @@ algs = {
         make_benchmark_vec,
         dict(),
     ),
-    "new bar splitting": (
+    "new_bar_splitting": (
         extractMeasures,
         dict(grayscale=True),
     ),

@@ -146,7 +146,7 @@ arguments.add_argument(
 )
 
 # vector saving constants
-ALG = "bar splitting"
+ALG = "bar_splitting"
 
 # retrieval constants
 LIN_WEIGHT = 0.1
