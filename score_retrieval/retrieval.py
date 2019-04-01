@@ -109,6 +109,14 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
                     lin_loss -= weight * r**2
                 elif lin_type == "r":
                     lin_loss -= weight * (1 + r)/2
+                elif lin_type == "diff":
+                    num_greater = 0
+                    prev_ind = inds[0]
+                    for ind in inds[1:]:
+                        if ind > prev_ind:
+                            num_greater += 1
+                        prev_ind = ind
+                    lin_loss -= num_greater/(len(inds) - 1)
                 else:
                     raise ValueError("unknown linearity loss type {}".format(lin_type))
             linearity_losses[label] += lin_loss
