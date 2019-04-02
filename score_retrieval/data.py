@@ -29,6 +29,8 @@ from score_retrieval.constants import (
     MULTIDATASET_TRAIN_RATIO,
     ALLOWED_AUGMENT_COMPOSERS,
     DISALLOWED_TRAIN_COMPOSERS,
+    NONE_DPI,
+    DPI,
     arguments,
 )
 
@@ -59,10 +61,15 @@ def get_label(image_path):
     return os.path.relpath(piece_dir, dataset_dir)
 
 
-def get_name_ind(img_path):
+def get_name_dpi_ind(img_path):
     """Get the name and index of the given image."""
-    name, ind = os.path.splitext(os.path.basename(img_path))[0].split("_")
-    return name, int(ind)
+    components = os.path.splitext(os.path.basename(img_path))[0].split("_")
+    if len(components) == 3:
+        name, dpi, ind = components
+    else:
+        name, ind = components
+        dpi = NONE_DPI
+    return name, int(dpi), int(ind)
 
 
 def index_images(dataset=None):
@@ -74,7 +81,9 @@ def index_images(dataset=None):
                 if IGNORE_IMAGES and fname in IGNORE_IMAGES:
                     continue
                 img_path = os.path.join(dirpath, fname)
-                name, ind = get_name_ind(img_path)
+                name, dpi, ind = get_name_dpi_ind(img_path)
+                if dpi != DPI:
+                    continue
                 if START_PAGE is not None and ind < START_PAGE:
                     continue
                 yield get_label(img_path), img_path
@@ -115,7 +124,7 @@ def gen_label_name_index(indexed_images, sort=False):
     """Return dict mapping labels to dict mapping names to image paths."""
     index = defaultdict(lambda: defaultdict(list))
     for label, img_path in indexed_images:
-        name, ind = get_name_ind(img_path)
+        name, dpi, ind = get_name_dpi_ind(img_path)
         group = index[label][name]
         if sort:
             while len(group) <= ind:
@@ -226,7 +235,7 @@ def get_names(paths):
     """Get a set of all the names in paths."""
     name_set = set()
     for img_path in paths:
-        name, ind = get_name_ind(img_path)
+        name, dpi, ind = get_name_dpi_ind(img_path)
         name_set.add(name)
     return name_set
 

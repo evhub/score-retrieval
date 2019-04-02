@@ -20,6 +20,7 @@ SORT_HTML_BY = re.compile(r"<span class='current-rating' id='current-rating-\d+'
 
 # data migration constants
 IMG_EXT = ".png"
+NONE_DPI = 50
 DPI = 100
 
 # data renaming constants
