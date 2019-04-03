@@ -14,8 +14,8 @@ from score_splitter import (
 )
 
 from score_retrieval.constants import (
-    ALG,
     arguments,
+    ALG,
     NONE_ALG,
 )
 from score_retrieval.data import (
