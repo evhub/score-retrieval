@@ -116,7 +116,7 @@ def load_query_veclists(query_paths, alg_name):
     return q_labels, q_veclists
 
 
-def load_db_vecs(database_paths, alg_name, return_paths=False):
+def load_db_vecs(database_paths, alg_name, return_paths=False, ind_per_page=False):
     """Return db_labels, db_vecs, db_inds."""
     db_labels = []
     db_vecs = []
@@ -137,6 +137,8 @@ def load_db_vecs(database_paths, alg_name, return_paths=False):
             #  in the database with the right index
             i = 0
             for img_path in paths:
+                if ind_per_page:
+                    i = 0
                 veclist = load_veclist(img_path, alg_name)
                 if veclist is None:
                     i += 1

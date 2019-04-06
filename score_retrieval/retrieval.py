@@ -239,7 +239,7 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAU
     Returns an iterator of (db_image_path, index_of_matched_bar) in order
     of the best match to the worst match for the given query vector."""
     # load db
-    db_label_strs, db_vecs, db_inds, db_vec_paths = load_db_vecs(db_paths, alg_name, return_paths=True)
+    db_label_strs, db_vecs, db_inds, db_vec_paths = load_db_vecs(db_paths, alg_name, return_paths=True, ind_per_page=True)
 
     # load single query vec
     q_vec = load_veclist(query_path, alg_name)[q_vec_ind]
