@@ -20,6 +20,7 @@ from score_retrieval.vec_db import (
     load_query_veclists,
     load_db_vecs,
     load_veclist,
+    algs,
 )
 from score_retrieval.constants import (
     arguments,
@@ -190,6 +191,8 @@ def run_retrieval_from_args(parsed_args=None):
     if parsed_args is None:
         parsed_args = arguments.parse_args()
     _data = gen_data_from_args(parsed_args)
+    if parsed_args.alg not in algs:
+        raise ValueError("unknown alg {} (valid algs: {})".format(parsed_args.alg, list(algs)))
     return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"])
 
 
