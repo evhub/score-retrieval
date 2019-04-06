@@ -110,6 +110,22 @@ DISALLOWED_TRAIN_COMPOSERS = (
 NONE_ALG = "bar_splitting"
 DEFAULT_ALG = "bar_splitting"
 
+# retrieval constants
+DEFAULT_METRIC = "dot"
+LIN_WEIGHT = 0.0
+LIN_TYPE_WEIGHTS = {
+    "slope": 0.0,
+    "r**2": 0.0,
+    "r": 0.0,
+    "diff": 1.0,
+}
+
+# evaluation constants
+TOP_N_ACCURACY = 5
+
+# exporting constants
+CLUSTER_LEN = 64
+
 # cli arg processing
 arguments = argparse.ArgumentParser(
     prog="score-retrieval",
@@ -120,6 +136,13 @@ arguments.add_argument(
     type=str,
     default=DEFAULT_ALG,
     help="defaults to {}".format(DEFAULT_ALG),
+)
+arguments.add_argument(
+    "--metric",
+    metavar="name",
+    type=str,
+    default=DEFAULT_METRIC,
+    help="defaults to {}".format(DEFAULT_METRIC),
 )
 arguments.add_argument(
     "--multidataset",
@@ -156,22 +179,6 @@ arguments.add_argument(
     default=TRAIN_ON_EXCESS,
     help="defaults to {}".format(TRAIN_ON_EXCESS)
 )
-
-# retrieval constants
-METRIC_NAME = "dot"
-LIN_WEIGHT = 0.0
-LIN_TYPE_WEIGHTS = {
-    "slope": 0.0,
-    "r**2": 0.0,
-    "r": 0.0,
-    "diff": 1.0,
-}
-
-# evaluation constants
-TOP_N_ACCURACY = 5
-
-# exporting constants
-CLUSTER_LEN = 64
 
 # utilities
 def get_dataset_dir(dataset=None):

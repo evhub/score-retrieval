@@ -28,7 +28,7 @@ from score_retrieval.constants import (
     LIN_TYPE_WEIGHTS,
     TOP_N_ACCURACY,
     DEFAULT_ALG,
-    METRIC_NAME,
+    DEFAULT_METRIC,
 )
 
 
@@ -78,7 +78,7 @@ METRICS = {
 }
 
 
-def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, metric_name=METRIC_NAME, debug=False):
+def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, metric_name=DEFAULT_METRIC, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
     # constants
@@ -173,7 +173,7 @@ def mk_vec_arr(veclist):
     return veclist_arr
 
 
-def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_paths, debug=False):
+def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_paths, metric_name=DEFAULT_METRIC, debug=False):
     """Run image retrieval on the given database, query."""
     q_label_strs, q_veclists = load_query_veclists(query_paths, alg_name)
     db_label_strs, db_vecs, db_inds = load_db_vecs(database_paths, alg_name)
@@ -194,7 +194,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
         veclist_arr = mk_vec_arr(veclist)
         if debug:
             print("veclist_arr.shape =", veclist_arr.shape)
-        sorted_labels = retrieve_veclist(veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=debug)
+        sorted_labels = retrieve_veclist(veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, metric_name=metric_name, debug=debug)
 
         # compute top N accuracy
         for i in range(len(in_top_n)):
@@ -227,10 +227,10 @@ def run_retrieval_from_args(parsed_args=None, debug=False):
     _data = gen_data_from_args(parsed_args)
     if parsed_args.alg not in algs:
         raise ValueError("unknown alg {} (valid algs: {})".format(parsed_args.alg, list(algs)))
-    return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"], debug=debug)
+    return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"], metric_name=parsed_args.metric, debug=debug)
 
 
-def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=METRIC_NAME, database_path=database_paths):
+def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAULT_METRIC, database_paths=database_paths):
     """Helper function for visualizing the best matching vectors.
 
     Takes in a path to a query image and the index of the bar in that
