@@ -56,10 +56,24 @@ def dot(arr1, arr2):
     return -np.dot(arr1, arr2.T)/3
 
 
+def query_expansion(dist_metric, nQE=25, alpha=3):
+    """Return a new distance metric that does query expansion."""
+    def new_dist_metric(q_arr, db_arr):
+        init_dists = dist_metric(q_arr, db_arr)
+        top_matches = np.argsort(init_dists, axis=-1)[:, :nQE]
+        new_q_arr = np.zeros(q_arr.shape)
+        for i, shortlist in enumerate(top_matches):
+            weights = init_dists[shortlist]**alpha
+            new_q_arr[i] = db_arr[shortlist] * weights / np.sum(weights)
+        return new_q_arr
+    return new_dist_metric
+
+
 METRICS = {
     "DTW": DTW,
     "L2": L2,
     "dot": dot,
+    "dot_QE": query_expansion(dot),
 }
 
 

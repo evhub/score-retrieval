@@ -158,7 +158,7 @@ arguments.add_argument(
 )
 
 # retrieval constants
-METRIC_NAME = "dot"
+METRIC_NAME = "dot_QE"
 LIN_WEIGHT = 0.0
 LIN_TYPE_WEIGHTS = {
     "slope": 0.0,
