@@ -175,7 +175,7 @@ def func_with_cnn_params(func, **params):
 
 algs = {
     "bar_splitting": (
-        func_with_cnn_params(create_bar_waveforms, image_size=1024),
+        create_bar_waveforms,
         dict(),
     ),
     "bar_splitting_whiten_128": (
