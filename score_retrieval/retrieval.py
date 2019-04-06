@@ -65,7 +65,7 @@ def query_expansion(dist_metric, nQE=25, alpha=3):
         for i, shortlist in enumerate(top_matches):
             weights = init_dists[i][shortlist]**alpha
             norm_weights = weights / np.sum(weights)
-            new_q_arr[i] = np.dot(norm_weights[:, np.newaxis], db_arr[shortlist])
+            new_q_arr[i] = np.dot(norm_weights[np.newaxis, :], db_arr[shortlist])
         return dist_metric(new_q_arr, db_arr)
     return new_dist_metric
 
