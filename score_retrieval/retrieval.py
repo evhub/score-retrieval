@@ -63,8 +63,8 @@ def query_expansion(dist_metric, nQE=25, alpha=3):
         top_matches = np.argsort(init_dists, axis=-1)[:, :nQE]
         new_q_arr = np.zeros(q_arr.shape)
         for i, shortlist in enumerate(top_matches):
-            weights = init_dists[shortlist]**alpha
-            new_q_arr[i] = db_arr[shortlist] * weights / np.sum(weights)
+            weights = init_dists[i][shortlist]**alpha
+            new_q_arr[i] = np.sum(db_arr[shortlist] * weights / np.sum(weights), axis=-1)
         return dist_metric(new_q_arr, db_arr)
     return new_dist_metric
 
