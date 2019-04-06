@@ -149,7 +149,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
     label_set = get_label_set(db_label_strs)
     db_labels = [label_set.index(label) for label in db_label_strs]
-    db_vecs_arr = np.asarray(db_vecs)
+    db_vecs_arr = np.squeeze(np.asarray(db_vecs))
     if debug:
         print("db_vecs_arr.shape =", db_vecs_arr.shape)
 
@@ -160,7 +160,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
         correct_label = label_set.index(correct_label_str)
 
         # run retrieval
-        veclist_arr = np.asarray(veclist)
+        veclist_arr = np.squeeze(np.asarray(veclist))
         if debug:
             print("veclist_arr.shape =", veclist_arr.shape)
         sorted_labels = retrieve_veclist(veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=debug)
@@ -228,4 +228,4 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=dat
 
 
 if __name__ == "__main__":
-    run_retrieval_from_args(debug=True)
+    run_retrieval_from_args()
