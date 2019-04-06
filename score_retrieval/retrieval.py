@@ -196,7 +196,7 @@ def run_retrieval_from_args(parsed_args=None):
 def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=database_paths):
     """Helper function for visualizing the best matching vectors.
 
-    Takes in a path to a query image and the index of the var in that
+    Takes in a path to a query image and the index of the bar in that
     image to get the best matches for.
 
     Returns an iterator of (db_image_path, index_of_matched_bar) in order
