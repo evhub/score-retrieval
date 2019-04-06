@@ -28,6 +28,7 @@ from score_retrieval.constants import (
     LIN_TYPE_WEIGHTS,
     TOP_N_ACCURACY,
     DEFAULT_ALG,
+    METRIC_NAME,
 )
 
 
@@ -55,7 +56,14 @@ def dot(arr1, arr2):
     return -np.dot(arr1, arr2.T)/3
 
 
-DIST_METRIC = L2
+METRICS = {
+    "DTW": DTW,
+    "L2": L2,
+    "dot": dot,
+}
+
+
+DIST_METRIC = METRICS[METRIC_NAME]
 
 
 def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=False):
