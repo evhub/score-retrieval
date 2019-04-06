@@ -26,6 +26,7 @@ from score_retrieval.constants import (
     LIN_WEIGHT,
     LIN_TYPE_WEIGHTS,
     TOP_N_ACCURACY,
+    DEFAULT_ALG,
 )
 
 
@@ -192,7 +193,7 @@ def run_retrieval_from_args(parsed_args=None):
     return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"])
 
 
-def best_vecs_for(alg_name, query_path, q_vec_ind, database_path=database_paths):
+def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=database_paths):
     """Helper function for visualizing the best matching vectors.
 
     Takes in a path to a query image and the index of the var in that
