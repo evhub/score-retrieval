@@ -230,7 +230,7 @@ def run_retrieval_from_args(parsed_args=None, debug=False):
     return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"], metric_name=parsed_args.metric, debug=debug)
 
 
-def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAULT_METRIC, database_paths=database_paths):
+def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAULT_METRIC, db_paths=database_paths):
     """Helper function for visualizing the best matching vectors.
 
     Takes in a path to a query image and the index of the bar in that
@@ -239,7 +239,7 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAU
     Returns an iterator of (db_image_path, index_of_matched_bar) in order
     of the best match to the worst match for the given query vector."""
     # load db
-    db_label_strs, db_vecs, db_inds, db_paths = load_db_vecs(database_paths, alg_name, return_paths=True)
+    db_label_strs, db_vecs, db_inds, db_vec_paths = load_db_vecs(db_paths, alg_name, return_paths=True)
 
     # load single query vec
     q_vec = load_veclist(query_path, alg_name)[q_vec_ind]
@@ -253,7 +253,7 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=DEFAU
 
     # yield information about best matches in order
     for match_ind in best_matches:
-        db_img_path = db_paths[match_ind]
+        db_img_path = db_vec_paths[match_ind]
         db_vec_ind = db_inds[match_ind]
         yield db_img_path, db_vec_ind
 
