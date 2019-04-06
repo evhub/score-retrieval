@@ -225,7 +225,7 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=dat
     q_vec = load_veclist(query_path, alg_name)[q_vec_ind]
 
     # compute distance vector
-    dist_vec = np.squeeze(DIST_METRIC(np.array([q_vec]), np.asarray(db_vecs)))
+    dist_vec = np.squeeze(DIST_METRIC(mk_vec_arr([q_vec]), mk_vec_arr(db_vecs)))
     assert dist_vec.shape == (len(db_vecs),)
 
     # find best matches
