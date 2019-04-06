@@ -58,16 +58,16 @@ def dot(arr1, arr2):
 DIST_METRIC = L2
 
 
-def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debug=False):
+def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
     # constants
     num_labels = len(label_set)
-    num_qvecs = len(query_veclist)
-    num_dbvecs = len(db_vecs)
+    num_qvecs, = query_veclist_arr.shape
+    num_dbvecs, = db_vecs_arr.shape
 
     # precompute distance matrix
-    dist_arr = DIST_METRIC(np.asarray(query_veclist), np.asarray(db_vecs))
+    dist_arr = DIST_METRIC(query_veclist_arr, db_vecs_arr)
     assert dist_arr.shape == (num_qvecs, num_dbvecs), "{} != {}".format(dist_arr.shape, (num_qvecs, num_dbvecs))
 
     # generate arrays mapping query to label to
@@ -84,11 +84,8 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
     # sum best distances into sum_min_losses
     sum_min_losses = np.sum(min_losses, axis=-1)
 
-    # calculate linearity by finding weighted abs(m - 1) - r^2 of the
-    #  indices (we take the negative so that smaller losses are better)
-    linearity_losses = np.zeros(num_labels)
-
     # only compute linearity losses if they will be weighted
+    linearity_losses = np.zeros(num_labels)
     if LIN_WEIGHT > 0:
         for label, inds in enumerate(min_inds):
 
@@ -152,6 +149,9 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
     label_set = get_label_set(db_label_strs)
     db_labels = [label_set.index(label) for label in db_label_strs]
+    db_vecs_arr = np.asarray(db_vecs)
+    if debug:
+        print("db_vecs_arr.shape =", db_vecs_arr.shape)
 
     in_top_n = [0] * TOP_N_ACCURACY
     mrrs = []
@@ -160,7 +160,10 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
         correct_label = label_set.index(correct_label_str)
 
         # run retrieval
-        sorted_labels = retrieve_veclist(veclist, db_labels, db_vecs, db_inds, label_set, debug=debug)
+        veclist_arr = np.asarray(veclist)
+        if debug:
+            print("veclist_arr.shape =", veclist_arr.shape)
+        sorted_labels = retrieve_veclist(veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=debug)
 
         # compute top N accuracy
         for i in range(len(in_top_n)):
@@ -181,19 +184,19 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
             n, acc, correct, len(q_veclists)))
 
     ave_mrr = np.mean(np.array(mrrs))
-    print("Got mean MRR of {}.".format(ave_mrr))
+    print("Got MRR of {}.".format(ave_mrr))
 
     return acc
 
 
-def run_retrieval_from_args(parsed_args=None):
+def run_retrieval_from_args(parsed_args=None, debug=False):
     """Run retrieval using the given args."""
     if parsed_args is None:
         parsed_args = arguments.parse_args()
     _data = gen_data_from_args(parsed_args)
     if parsed_args.alg not in algs:
         raise ValueError("unknown alg {} (valid algs: {})".format(parsed_args.alg, list(algs)))
-    return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"])
+    return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"], debug=debug)
 
 
 def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=database_paths):
@@ -225,4 +228,4 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=dat
 
 
 if __name__ == "__main__":
-    run_retrieval_from_args()
+    run_retrieval_from_args(debug=True)
