@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from scipy import signal as ss
 
-from benchmarks import call_benchmark
+from benchmarks import call_benchmark, default_params
 from tsai_bars import extractMeasures
 from score_splitter import (
     create_waveforms,
@@ -15,7 +15,6 @@ from score_splitter import (
 
 from score_retrieval.constants import (
     arguments,
-    ALG,
     NONE_ALG,
 )
 from score_retrieval.data import (
@@ -45,7 +44,7 @@ def isnull(arr):
     return not arr.shape or sum(arr.shape) == 0
 
 
-def get_veclist_path(img_path, alg=ALG):
+def get_veclist_path(img_path, alg):
     """Get the veclist path for the given image path and alg."""
     if alg == NONE_ALG:
         alg = None
@@ -56,7 +55,7 @@ def get_veclist_path(img_path, alg=ALG):
         return "{}_{}.npy".format(base_path, alg)
 
 
-def save_veclists(image_paths, image_to_veclist_func, grayscale=False, resample_len=None, normalize=False, debug=False):
+def save_veclists(image_paths, image_to_veclist_func, alg_name, grayscale=True, resample_len=None, normalize=False, debug=False):
     """Saves database of vectors using the given vector generation function."""
     for path in image_paths:
         print("Generating veclist for image {}...".format(path))
@@ -89,13 +88,13 @@ def save_veclists(image_paths, image_to_veclist_func, grayscale=False, resample_
         if debug:
             print("veclist.shape =", veclist.shape)
 
-        veclist_path = get_veclist_path(path)
+        veclist_path = get_veclist_path(path, alg_name)
         np.save(veclist_path, veclist)
 
 
-def load_veclist(image_path):
+def load_veclist(image_path, alg_name):
     """Return veclist or None for the given image path."""
-    veclist_path = get_veclist_path(image_path)
+    veclist_path = get_veclist_path(image_path, alg_name)
     if os.path.exists(veclist_path):
         print("Loading {}...".format(veclist_path))
         return np.load(veclist_path)
@@ -104,12 +103,12 @@ def load_veclist(image_path):
         return None
 
 
-def load_query_veclists(query_paths):
+def load_query_veclists(query_paths, alg_name):
     """Return q_labels, q_veclists."""
     q_labels = []
     q_veclists = []
     for path in query_paths:
-        veclist = load_veclist(path)
+        veclist = load_veclist(path, alg_name)
         if veclist is not None:
             label = get_label(path)
             q_labels.append(label)
@@ -117,7 +116,7 @@ def load_query_veclists(query_paths):
     return q_labels, q_veclists
 
 
-def load_db_vecs(database_paths):
+def load_db_vecs(database_paths, alg_name):
     """Return db_labels, db_vecs, db_inds."""
     db_labels = []
     db_vecs = []
@@ -136,7 +135,7 @@ def load_db_vecs(database_paths):
             #  in the database with the right index
             i = 0
             for img_path in paths:
-                veclist = load_veclist(img_path)
+                veclist = load_veclist(img_path, alg_name)
                 if veclist is None:
                     i += 1
                 else:
@@ -150,40 +149,57 @@ def load_db_vecs(database_paths):
 
 
 def make_benchmark_vec(image):
+    """Make vector using the benchmark algorithm."""
     resized_image = cv2.resize(image, (1024, 1024))
     return call_benchmark(images=[resized_image])
 
 
+def func_with_cnn_params(func, **params):
+    """Return function that sets cnn params first."""
+    def new_func(*args, **kwargs):
+        old_default_params = default_params.copy()
+        default_params.update(params)
+        try:
+            return func(*args, **kwargs)
+        finally:
+            default_params.update(old_default_params)
+    return new_func
+
+
 algs = {
     "bar_splitting": (
-        create_bar_waveforms,
-        dict(grayscale=True),
+        func_with_cnn_params(create_bar_waveforms, image_size=1024),
+        dict(),
+    ),
+    "bar_splitting_whiten_128": (
+        func_with_cnn_params(create_bar_waveforms, image_size=128),
+        dict(),
     ),
     "stave_splitting": (
         create_waveforms,
-        dict(grayscale=True),
+        dict(),
     ),
     "benchmark": (
         make_benchmark_vec,
-        dict(),
+        dict(grayscale=False),
     ),
     "new_bar_splitting": (
         extractMeasures,
-        dict(grayscale=True),
+        dict(),
     ),
 }
 
 
-def generate_vectors_from_args(parsed_args=None, alg=ALG):
+def generate_vectors_from_args(parsed_args=None):
     """Save veclists for the given alg and args."""
     if parsed_args is None:
         parsed_args = arguments.parse_args()
-    func, kwargs = algs[alg]
+    func, kwargs = algs[parsed_args.alg]
     if parsed_args.multidataset:
         paths = database_paths + query_paths
     else:
         paths = (path for path, label in index_images(parsed_args.dataset))
-    save_veclists(paths, func, **kwargs)
+    save_veclists(paths, func, parsed_args.alg, **kwargs)
 
 
 if __name__ == "__main__":

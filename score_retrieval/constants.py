@@ -106,9 +106,20 @@ DISALLOWED_TRAIN_COMPOSERS = (
     "Saint-Sa%C3%ABns,_Camille",
 )
 
+# vector saving constants
+NONE_ALG = "bar_splitting"
+DEFAULT_ALG = "bar_splitting"
+
 # cli arg processing
 arguments = argparse.ArgumentParser(
     prog="score-retrieval",
+)
+arguments.add_argument(
+    "--alg",
+    metavar="name",
+    type=str,
+    default=DEFAULT_ALG,
+    help="defaults to {}".format(DEFAULT_ALG),
 )
 arguments.add_argument(
     "--multidataset",
@@ -145,10 +156,6 @@ arguments.add_argument(
     default=TRAIN_ON_EXCESS,
     help="defaults to {}".format(TRAIN_ON_EXCESS)
 )
-
-# vector saving constants
-NONE_ALG = "bar_splitting"
-ALG = "bar_splitting"
 
 # retrieval constants
 LIN_WEIGHT = 0.0

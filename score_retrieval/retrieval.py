@@ -142,10 +142,10 @@ def retrieve_veclist(query_veclist, db_labels, db_vecs, db_inds, label_set, debu
     return sorted_labels
 
 
-def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=False):
+def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_paths, debug=False):
     """Run image retrieval on the given database, query."""
-    q_label_strs, q_veclists = load_query_veclists(query_paths)
-    db_label_strs, db_vecs, db_inds = load_db_vecs(database_paths)
+    q_label_strs, q_veclists = load_query_veclists(query_paths, alg_name)
+    db_label_strs, db_vecs, db_inds = load_db_vecs(database_paths, alg_name)
 
     label_set = get_label_set(db_label_strs)
     db_labels = [label_set.index(label) for label in db_label_strs]
@@ -183,6 +183,13 @@ def run_retrieval(query_paths=query_paths, database_paths=database_paths, debug=
     return acc
 
 
+def run_retrieval_from_args(parsed_args=None):
+    """Run retrieval using the given args."""
+    if parsed_args is None:
+        parsed_args = arguments.parse_args()
+    _data = gen_data_from_args(parsed_args)
+    return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"])
+
+
 if __name__ == "__main__":
-    _data = gen_data_from_args()
-    run_retrieval(query_paths=_data["query_paths"], database_paths=_data["database_paths"])
+    run_retrieval_from_args()
