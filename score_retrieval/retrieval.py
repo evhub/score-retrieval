@@ -19,6 +19,7 @@ from score_retrieval.data import (
 from score_retrieval.vec_db import (
     load_query_veclists,
     load_db_vecs,
+    load_veclist,
 )
 from score_retrieval.constants import (
     arguments,
@@ -189,6 +190,34 @@ def run_retrieval_from_args(parsed_args=None):
         parsed_args = arguments.parse_args()
     _data = gen_data_from_args(parsed_args)
     return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"])
+
+
+def best_vecs_for(alg_name, query_path, q_vec_ind, database_path=database_paths):
+    """Helper function for visualizing the best matching vectors.
+
+    Takes in a path to a query image and the index of the var in that
+    image to get the best matches for.
+
+    Returns an iterator of (db_image_path, index_of_matched_bar) in order
+    of the best match to the worst match for the given query vector."""
+    # load db
+    db_label_strs, db_vecs, db_inds, db_paths = load_db_vecs(database_paths, alg_name, return_paths=True)
+
+    # load single query vec
+    q_vec = load_veclist(query_path, alg_name)[q_vec_ind]
+
+    # compute distance vector
+    dist_vec = np.squeeze(DIST_METRIC(np.array([q_vec]), np.asarray(db_vecs)))
+    assert dist_vec.shape == (len(db_vecs),)
+
+    # find best matches
+    best_matches = np.argsort(dist_vec)
+
+    # yield information about best matches in order
+    for match_ind in best_matches:
+        db_img_path = db_paths[match_ind]
+        db_vec_ind = db_inds[match_ind]
+        yield db_img_path, db_vec_ind
 
 
 if __name__ == "__main__":

@@ -116,11 +116,13 @@ def load_query_veclists(query_paths, alg_name):
     return q_labels, q_veclists
 
 
-def load_db_vecs(database_paths, alg_name):
+def load_db_vecs(database_paths, alg_name, return_paths=False):
     """Return db_labels, db_vecs, db_inds."""
     db_labels = []
     db_vecs = []
     db_indices = []
+    if return_paths:
+        db_paths = []
 
     # generate db index
     db_index = []
@@ -143,9 +145,14 @@ def load_db_vecs(database_paths, alg_name):
                         db_labels.append(label)
                         db_vecs.append(vec)
                         db_indices.append(i)
+                        if return_paths:
+                            db_paths.append(img_path)
                         i += 1
 
-    return db_labels, db_vecs, db_indices
+    if return_paths:
+        return db_labels, db_vecs, db_indices, db_paths
+    else:
+        return db_labels, db_vecs, db_indices
 
 
 def make_benchmark_vec(image):
