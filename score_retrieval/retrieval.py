@@ -78,10 +78,7 @@ METRICS = {
 }
 
 
-DIST_METRIC = METRICS[METRIC_NAME]
-
-
-def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=False):
+def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, metric_name=METRIC_NAME, debug=False):
     """Find the label with the min sum of min dist and mean change
     in index for each vector."""
     # constants
@@ -91,7 +88,7 @@ def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_s
     assert qvecsize == dbvecsize, "{} != {}".format(qvecsize, dbvecsize)
 
     # precompute distance matrix
-    dist_arr = DIST_METRIC(query_veclist_arr, db_vecs_arr)
+    dist_arr = METRICS[metric_name](query_veclist_arr, db_vecs_arr)
     assert dist_arr.shape == (num_qvecs, num_dbvecs), "{} != {}".format(dist_arr.shape, (num_qvecs, num_dbvecs))
 
     # generate arrays mapping query to label to
@@ -233,7 +230,7 @@ def run_retrieval_from_args(parsed_args=None, debug=False):
     return run_retrieval(parsed_args.alg, query_paths=_data["query_paths"], database_paths=_data["database_paths"], debug=debug)
 
 
-def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=database_paths):
+def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, metric_name=METRIC_NAME, database_path=database_paths):
     """Helper function for visualizing the best matching vectors.
 
     Takes in a path to a query image and the index of the bar in that
@@ -248,7 +245,7 @@ def best_vecs_for(query_path, q_vec_ind, alg_name=DEFAULT_ALG, database_path=dat
     q_vec = load_veclist(query_path, alg_name)[q_vec_ind]
 
     # compute distance vector
-    dist_vec = np.squeeze(DIST_METRIC(mk_vec_arr([q_vec]), mk_vec_arr(db_vecs)))
+    dist_vec = np.squeeze(METRICS[metric_name](mk_vec_arr([q_vec]), mk_vec_arr(db_vecs)))
     assert dist_vec.shape == (len(db_vecs),)
 
     # find best matches
