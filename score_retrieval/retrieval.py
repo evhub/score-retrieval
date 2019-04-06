@@ -63,8 +63,9 @@ def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_s
     in index for each vector."""
     # constants
     num_labels = len(label_set)
-    num_qvecs, = query_veclist_arr.shape
-    num_dbvecs, = db_vecs_arr.shape
+    num_qvecs, qvecsize = query_veclist_arr.shape
+    num_dbvecs, dbvecsize = db_vecs_arr.shape
+    assert qvecsize == dbvecsize, "{} != {}".format(qvecsize, dbvecsize)
 
     # precompute distance matrix
     dist_arr = DIST_METRIC(query_veclist_arr, db_vecs_arr)
