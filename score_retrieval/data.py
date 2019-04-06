@@ -283,6 +283,7 @@ def gen_multi_dataset_data(
         train_ratio=MULTIDATASET_TRAIN_RATIO,
         allowed_augment_composers=ALLOWED_AUGMENT_COMPOSERS,
         disallowed_train_composers=DISALLOWED_TRAIN_COMPOSERS,
+        debug=False,
     ):
     """Generate all database endpoints from separate datasets."""
     datasets = (
@@ -304,7 +305,8 @@ def gen_multi_dataset_data(
     if db_ratio is not None:
         db_label_name_index, = get_split_indexes([db_ratio], db_label_name_index)
     database_paths, database_labels = deindex(db_label_name_index)
-    print("Unaugmented db: {} pdfs, {} images".format(len(set(database_labels)), len(database_paths)))
+    if debug:
+        print("Unaugmented db: {} pdfs, {} images".format(len(set(database_labels)), len(database_paths)))
 
     # augment db data
     if augment_db_dataset is not None:
@@ -329,19 +331,19 @@ def gen_multi_dataset_data(
     return locals()
 
 
-def gen_data_from_args(parsed_args=None):
+def gen_data_from_args(parsed_args=None, multidataset_debug=False):
     if parsed_args is None:
         parsed_args = arguments.parse_args()
     print("parsed_args =", parsed_args)
     if parsed_args.multidataset:
-        return gen_multi_dataset_data()
+        return gen_multi_dataset_data(debug=multidataset_debug)
     else:
         return gen_single_dataset_data(parsed_args.dataset, parsed_args.test_ratio, parsed_args.train_ratio, parsed_args.train_on_excess)
 
 
 # generate data
 if __name__ == "__main__":
-    _data = gen_data_from_args()
+    _data = gen_data_from_args(multidataset_debug=True)
 elif USE_MULTIDATASET:
     _data = gen_multi_dataset_data()
 else:
