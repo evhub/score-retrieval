@@ -174,11 +174,17 @@ algs = {
 }
 
 
-if __name__ == "__main__":
-    func, kwargs = algs[ALG]
-    parsed_args = arguments.parse_args()
+def generate_vectors_from_args(parsed_args=None, alg=ALG):
+    """Save veclists for the given alg and args."""
+    if parsed_args is None:
+        parsed_args = arguments.parse_args()
+    func, kwargs = algs[alg]
     if parsed_args.multidataset:
         paths = database_paths + query_paths
     else:
         paths = (path for path, label in index_images(parsed_args.dataset))
     save_veclists(paths, func, **kwargs)
+
+
+if __name__ == "__main__":
+    generate_vectors_from_args()

@@ -36,7 +36,8 @@ run-retrieval:
 	python ./score_retrieval/retrieval.py
 
 .PHONY: run-all
-run-all: save-vecs run-retrieval
+run-all:
+	python ./score_retrieval/run_all.py
 
 .PHONY: index-data
 index-data:
