@@ -143,6 +143,16 @@ def retrieve_veclist(query_veclist_arr, db_labels, db_vecs_arr, db_inds, label_s
     return sorted_labels
 
 
+def mk_vec_arr(veclist):
+    """Constructs an array from the given veclist."""
+    veclist_arr = np.asarray(veclist)
+    if veclist_arr.ndim == 3:
+        assert veclist_arr.shape[1] == 1, "{} != 1".format(veclist_arr.shape[1])
+        veclist_arr = np.reshape(veclist_arr, (veclist_arr.shape[0], veclist_arr.shape[2]))
+    assert veclist_arr.ndim == 2, "bad shape: {}".format(veclist_arr.shape)
+    return veclist_arr
+
+
 def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_paths, debug=False):
     """Run image retrieval on the given database, query."""
     q_label_strs, q_veclists = load_query_veclists(query_paths, alg_name)
@@ -150,7 +160,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
     label_set = get_label_set(db_label_strs)
     db_labels = [label_set.index(label) for label in db_label_strs]
-    db_vecs_arr = np.squeeze(np.asarray(db_vecs))
+    db_vecs_arr = mk_vec_arr(db_vecs)
     if debug:
         print("db_vecs_arr.shape =", db_vecs_arr.shape)
 
@@ -161,7 +171,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
         correct_label = label_set.index(correct_label_str)
 
         # run retrieval
-        veclist_arr = np.squeeze(np.asarray(veclist))
+        veclist_arr = mk_vec_arr(veclist)
         if debug:
             print("veclist_arr.shape =", veclist_arr.shape)
         sorted_labels = retrieve_veclist(veclist_arr, db_labels, db_vecs_arr, db_inds, label_set, debug=debug)
