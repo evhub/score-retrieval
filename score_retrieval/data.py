@@ -304,6 +304,7 @@ def gen_multi_dataset_data(
     if db_ratio is not None:
         db_label_name_index, = get_split_indexes([db_ratio], db_label_name_index)
     database_paths, database_labels = deindex(db_label_name_index)
+    print("Unaugmented db: {} pdfs, {} images".format(len(set(database_labels)), len(database_paths)))
 
     # augment db data
     if augment_db_dataset is not None:
