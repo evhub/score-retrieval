@@ -1,7 +1,7 @@
 from score_retrieval.constants import arguments
 from score_retrieval.data import gen_data_from_args
 from score_retrieval.vec_db import generate_vectors_from_args
-from score_retrieval.retrieval import run_retrieval
+from score_retrieval.retrieval import run_retrieval_from_args
 
 
 def main():
@@ -12,8 +12,7 @@ def main():
     generate_vectors_from_args(parsed_args)
 
     # run retrieval
-    _data = gen_data_from_args(parsed_args)
-    run_retrieval(query_paths=_data["query_paths"], database_paths=_data["database_paths"])
+    run_retrieval_from_args(parsed_args)
 
 
 if __name__ == "__main__":
