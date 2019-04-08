@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 
 from score_retrieval.data import (
@@ -54,9 +56,9 @@ def calculate_mrr(all_pos_ranks):
     return np.mean(np.array(mrrs))
 
 
-def individual_mrr(pos_rank):
+def individual_mrr(pos_ranks):
     """Compute a single MRR from the given pos_ranks."""
-    return 1/(pos_rank + 1)
+    return 1/(pos_ranks + 1)
 
 
 def calculate_acc(all_pos_ranks, top_n=1):
@@ -72,3 +74,27 @@ def calculate_acc(all_pos_ranks, top_n=1):
                     break
     acc = correct / total
     return acc, correct, total
+
+
+def individual_ap(pos_ranks):
+    """Compute a single AP from the given pos_ranks."""
+    # handle single integers
+    if isinstance(pos_ranks, int):
+        return np.mean(individual_ap(np.array([pos_ranks])))
+
+    # handle arrays
+    ap = 0
+    for i, rank in enumerate(pos_ranks):
+        precision_0 = 1 if rank == 0 else i/rank
+        precision_1 = (i + 1)/(rank + 1)
+        ap += (precision_0 + precision_1)/2
+    return ap
+
+
+def calculate_map(all_pos_ranks):
+    """Compute MAP for the given pos_ranks."""
+    aps = []
+    for pos_ranks in all_pos_ranks:
+        if len(pos_ranks):
+            aps.append(np.mean(individual_ap(pos_ranks)))
+    return np.mean(np.array(aps))

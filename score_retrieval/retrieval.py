@@ -8,7 +8,10 @@ from scipy.spatial.distance import euclidean
 from scipy.stats import linregress
 from fastdtw import fastdtw
 
-from score_retrieval.eval import individual_mrr
+from score_retrieval.eval import (
+    individual_mrr,
+    individual_ap,
+)
 from score_retrieval.data import (
     query_paths,
     database_paths,
@@ -186,6 +189,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
     in_top_n = [0] * TOP_N_ACCURACY
     mrrs = []
+    aps = []
     for i, (correct_label_str, veclist) in enumerate(zip(q_label_strs, q_veclists)):
         print("({}/{}) Correct label: {}".format(i+1, len(q_veclists), correct_label_str))
         correct_label = label_set.index(correct_label_str)
@@ -202,11 +206,18 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
             if correct_label in sorted_labels[:n]:
                 in_top_n[i] += 1
 
-        # compute MRR
+        # get pos rank
         pos_rank = sorted_labels.index(correct_label)
+
+        # compute MRR
         mrr = individual_mrr(pos_rank)
         print("\tMRR: {}".format(mrr))
         mrrs.append(mrr)
+
+        # compute AP
+        ap = individual_ap(pos_rank)
+        print("\tAP: {}".format(ap))
+        aps.append(ap)
 
     for i, correct in enumerate(in_top_n):
         n = i + 1
@@ -216,6 +227,9 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
     ave_mrr = np.mean(np.array(mrrs))
     print("Got MRR of {}.".format(ave_mrr))
+
+    ave_ap = np.mean(np.array(aps))
+    print("Got MAP of {}.".format(ave_ap))
 
     return acc
 
