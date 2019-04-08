@@ -184,6 +184,16 @@ algs = {
         func_with_cnn_params(create_bar_waveforms, image_size=128),
         dict(),
     ),
+    "tuned_bar_splitting": (
+        func_with_cnn_params(create_bar_waveforms, network=os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+            "cnnimageretrieval-pytorch",
+            "weights",
+            "scores_vgg16_gem_whiten_contrastive_m0.85_adam_lr1.0e-06_wd1.0e-04_nnum2_qsize250_psize2500_bsize1_imsize1024",
+            "model_best.pth.tar",
+        )),
+        dict(),
+    ),
     "stave_splitting": (
         create_waveforms,
         dict(),
