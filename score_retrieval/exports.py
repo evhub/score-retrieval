@@ -10,6 +10,7 @@ from score_retrieval.data import (
     query_paths as qimages,
     query_labels as qimage_labels,
     indices_with_label,
+    get_label_set,
 )
 
 
@@ -54,22 +55,10 @@ def random_index(label_list, label, not_ind):
         print("Only one image with label {} in training dataset.".format(label))
         return not_ind
 
-def rep_count(repeat, limit):
-    """Yield each number repeat times up to length limit."""
-    ind = 0
-    i = 0
-    done = False
-    while not done:
-        i += 1
-        for _ in range(repeat):
-            if ind >= limit:
-                done = True
-                break
-            yield i
-            ind += 1
+train_label_set = get_label_set(train_labels)
 
 db = {
-    "cluster": list(rep_count(CLUSTER_LEN, len(train_images))),
+    "cluster": [train_label_set.index(label) for label in train_labels],
     "qidxs": range(len(train_images)),
     "pidxs": [
         random_index(train_labels, label, i)
