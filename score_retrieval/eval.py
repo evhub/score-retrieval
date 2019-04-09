@@ -83,12 +83,12 @@ def individual_ap(pos_ranks):
         return np.mean(individual_ap(np.array([pos_ranks])))
 
     # handle arrays
-    assert len(pos_ranks) == 1, "this AP implementation only works with one result per label"
     ap = 0
+    recall_step = 1 / len(pos_ranks)
     for i, rank in enumerate(pos_ranks):
         precision_0 = 1 if rank == 0 else i/rank
         precision_1 = (i + 1)/(rank + 1)
-        ap += (precision_0 + precision_1)/2
+        ap += (precision_0 + precision_1) * recall_step / 2
     return ap
 
 
