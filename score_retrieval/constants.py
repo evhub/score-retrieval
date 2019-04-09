@@ -29,7 +29,6 @@ QUERY_NAME = "query"
 DB_NAME = "db"
 
 # universal dataset constants
-EXPORT_TEST_AS_TRAIN = False
 START_PAGE = 0
 IGNORE_IMAGES = None
 
@@ -124,7 +123,7 @@ LIN_TYPE_WEIGHTS = {
 TOP_N_ACCURACY = 5
 
 # exporting constants
-CLUSTER_LEN = 64
+EXPORT_TEST_AS_TRAIN = False
 
 # cli arg processing
 arguments = argparse.ArgumentParser(

@@ -1,9 +1,6 @@
 import random
 
-from score_retrieval.constants import (
-    CLUSTER_LEN,
-    EXPORT_TEST_AS_TRAIN,
-)
+from score_retrieval.constants import EXPORT_TEST_AS_TRAIN
 from score_retrieval.data import (
     database_paths as images,
     database_labels as image_labels,
