@@ -175,7 +175,7 @@ def func_with_cnn_params(func, **params):
     return new_func
 
 
-algs = {
+ALGS = {
     "bar_splitting": (
         create_bar_waveforms,
         dict(),
@@ -217,7 +217,7 @@ def generate_vectors_from_args(parsed_args=None):
     """Save veclists for the given alg and args."""
     if parsed_args is None:
         parsed_args = arguments.parse_args()
-    func, kwargs = algs[parsed_args.alg]
+    func, kwargs = ALGS[parsed_args.alg]
     if parsed_args.multidataset:
         paths = database_paths + query_paths
     else:
