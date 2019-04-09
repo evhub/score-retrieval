@@ -194,6 +194,10 @@ algs = {
         )),
         dict(),
     ),
+    "vgg_bar_splitting": (
+        func_with_cnn_params(create_bar_waveforms, network="vgg16-gem", offtheshelf=True),
+        dict(),
+    ),
     "stave_splitting": (
         create_waveforms,
         dict(),
