@@ -190,7 +190,7 @@ ALGS = {
             "cnnimageretrieval-pytorch",
             "weights",
             "scores_vgg16_gem_whiten_contrastive_m0.85_adam_lr1.0e-06_wd1.0e-04_nnum2_qsize250_psize2500_bsize1_imsize1024",
-            "model_best.pth.tar",
+            "model_epoch100.pth.tar",
         )),
         dict(),
     ),
