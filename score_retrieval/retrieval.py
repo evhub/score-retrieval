@@ -211,7 +211,7 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
 
         # compute MRR
         mrr = individual_mrr(pos_rank)
-        print("\tMRR: {}".format(mrr))
+        print("\tRR: {}".format(mrr))
         mrrs.append(mrr)
 
         # compute AP
@@ -226,10 +226,10 @@ def run_retrieval(alg_name, query_paths=query_paths, database_paths=database_pat
             n, acc, correct, len(q_veclists)))
 
     ave_mrr = np.mean(np.array(mrrs))
-    print("Got MRR of {}.".format(ave_mrr))
+    print("Got mRR of {}.".format(ave_mrr))
 
     ave_ap = np.mean(np.array(aps))
-    print("Got MAP of {}.".format(ave_ap))
+    print("Got mAP of {}.".format(ave_ap))
 
     return acc
 
