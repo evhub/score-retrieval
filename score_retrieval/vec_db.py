@@ -6,8 +6,15 @@ import cv2
 import numpy as np
 from scipy import signal as ss
 
-from benchmarks import call_benchmark, default_params
-from deprecated_measure_segmentation import score_splitter, tsai_bars
+from benchmarks import (
+    call_benchmark,
+    default_params,
+    tuned_network_path,
+)
+from deprecated_measure_segmentation import (
+    score_splitter,
+    tsai_bars,
+)
 import measure_segmentation
 
 from score_retrieval.constants import (
@@ -177,6 +184,10 @@ ALGS = {
         measure_segmentation.create_bar_waveforms,
         dict(),
     ),
+    "tuned_measure_segmentation": (
+        func_with_cnn_params(measure_segmentation.create_bar_waveforms, network=tuned_network_path),
+        dict(),
+    ),
     "bar_splitting": (
         score_splitter.create_bar_waveforms,
         dict(),
@@ -186,13 +197,7 @@ ALGS = {
         dict(),
     ),
     "tuned_bar_splitting": (
-        func_with_cnn_params(score_splitter.create_bar_waveforms, network=os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-            "cnnimageretrieval-pytorch",
-            "weights",
-            "scores_vgg16_gem_whiten_contrastive_m0.85_adam_lr1.0e-06_wd1.0e-04_nnum2_qsize250_psize2500_bsize1_imsize1024",
-            "model_epoch100.pth.tar",
-        )),
+        func_with_cnn_params(score_splitter.create_bar_waveforms, network=tuned_network_path),
         dict(),
     ),
     "vgg_bar_splitting": (
