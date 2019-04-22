@@ -55,7 +55,8 @@ def get_veclist_path(img_path, alg):
 def save_veclists(image_paths, image_to_veclist_func, alg_name, grayscale=True, resample_len=None, normalize=False, debug=False):
     """Saves database of vectors using the given vector generation function."""
     for path in image_paths:
-        print("Generating veclist for image {}...".format(path))
+        veclist_path = get_veclist_path(path, alg_name)
+        print("Generating veclist for {}...".format(veclist_path))
 
         image = load_img(path, grayscale=grayscale)
         if image is None:
@@ -85,7 +86,6 @@ def save_veclists(image_paths, image_to_veclist_func, alg_name, grayscale=True, 
         if debug:
             print("veclist.shape =", veclist.shape)
 
-        veclist_path = get_veclist_path(path, alg_name)
         np.save(veclist_path, veclist)
 
 
