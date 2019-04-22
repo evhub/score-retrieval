@@ -7,11 +7,8 @@ import numpy as np
 from scipy import signal as ss
 
 from benchmarks import call_benchmark, default_params
-from tsai_bars import extractMeasures
-from score_splitter import (
-    create_waveforms,
-    create_bar_waveforms,
-)
+from deprecated_measure_segmentation import score_splitter, tsai_bars
+import measure_segmentation
 
 from score_retrieval.constants import (
     arguments,
@@ -176,16 +173,20 @@ def func_with_cnn_params(func, **params):
 
 
 ALGS = {
+    "measure_segmentation": (
+        measure_segmentation.create_bar_waveforms,
+        dict(),
+    ),
     "bar_splitting": (
-        create_bar_waveforms,
+        score_splitter.create_bar_waveforms,
         dict(),
     ),
     "bar_splitting_whiten_128": (
-        func_with_cnn_params(create_bar_waveforms, image_size=128),
+        func_with_cnn_params(score_splitter.create_bar_waveforms, image_size=128),
         dict(),
     ),
     "tuned_bar_splitting": (
-        func_with_cnn_params(create_bar_waveforms, network=os.path.join(
+        func_with_cnn_params(score_splitter.create_bar_waveforms, network=os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
             "cnnimageretrieval-pytorch",
             "weights",
@@ -195,11 +196,11 @@ ALGS = {
         dict(),
     ),
     "vgg_bar_splitting": (
-        func_with_cnn_params(create_bar_waveforms, network="vgg16-gem", offtheshelf=True),
+        func_with_cnn_params(score_splitter.create_bar_waveforms, network="vgg16-gem", offtheshelf=True),
         dict(),
     ),
     "stave_splitting": (
-        create_waveforms,
+        score_splitter.create_waveforms,
         dict(),
     ),
     "benchmark": (
@@ -207,7 +208,7 @@ ALGS = {
         dict(grayscale=False),
     ),
     "new_bar_splitting": (
-        extractMeasures,
+        tsai_bars.extractMeasures,
         dict(),
     ),
 }
