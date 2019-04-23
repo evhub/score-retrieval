@@ -107,7 +107,7 @@ DISALLOWED_TRAIN_COMPOSERS = (
 
 # vector saving constants
 NONE_ALG = "bar_splitting"
-DEFAULT_ALG = "bar_splitting"
+DEFAULT_ALG = "measure_segmentation"
 
 # retrieval constants
 DEFAULT_METRIC = "dot"

@@ -188,6 +188,10 @@ ALGS = {
         func_with_cnn_params(measure_segmentation.create_bar_waveforms, network=tuned_network_path),
         dict(),
     ),
+    "vgg_measure_segmentation": (
+        func_with_cnn_params(measure_segmentation.create_bar_waveforms, network="vgg16-gem", offtheshelf=True),
+        dict(),
+    ),
     "bar_splitting": (
         score_splitter.create_bar_waveforms,
         dict(),
