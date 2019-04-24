@@ -23,7 +23,7 @@ python ./score_retrieval/run_all.py --alg <alg_name>
 where `<alg_name>` is one of the following:
 
 - `measure_segmentation` to run our best system using measure segmentation,
-- `vgg_measure_segmentation` to run base vgg-gem with measure segmetnation, and
+- `vgg_measure_segmentation` to run base vgg-gem with measure segmentation, and
 - `tuned_measure_segmentation` to run measure segmentation utilizing a fine-tuned network.
 
 To run `tuned_measure_segmentation`, you will need to have previously [run fine-tuning on the training data](https://github.com/evhub/cnnimageretrieval-pytorch).
