@@ -7,7 +7,7 @@ import argparse
 random.seed(0)
 
 # base data constants
-DATA_DIR = "/home/ehubinger/score-retrieval/data"
+DATA_DIR = "/score-retrieval-data"
 if not os.path.exists(DATA_DIR):
     print("Could not find data dir {}, defaulting to local data dir.".format(DATA_DIR))
     DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")

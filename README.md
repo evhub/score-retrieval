@@ -7,7 +7,7 @@ This repository contains the code used in "Sheet Music Identification Using Meas
 To install this repository, you will need to
 
 1. `git clone https://github.com/evhub/score-retrieval.git`,
-2. download the data to `./data`,
+2. download the data to `/score-retrieval-data` or `./data`,
 3. install [the CNN code](https://github.com/evhub/cnnimageretrieval-pytorch),
 4. install [the measure segmentation code](https://github.com/aditya-khant/sheet-id-splitter), and
 5. `make install`.
