@@ -41,7 +41,7 @@ TRAIN_ON_EXCESS = True
 
 # multi dataset constants
 USE_MULTIDATASET = True
-QUERY_DATASET = "query_dataset"
+QUERY_DATASET = "cellphone_piano_queries"
 DB_DATASET = "db_dataset"
 AUGMENT_DB_DATASET = "augment_dataset"
 TRAIN_DATASET = "new_piano_dataset"
